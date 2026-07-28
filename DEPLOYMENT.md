@@ -11,8 +11,14 @@ production it expects migration files, which live in `src/migrations/`.
 Run migrations before the server starts. In Coolify, set the start command to:
 
 ```bash
-pnpm payload migrate && pnpm start
+npx payload migrate && npm start
 ```
+
+This deployment builds with Nixpacks, not the repo's `Dockerfile` — that
+Dockerfile expects `output: 'standalone'` in `next.config.ts`, which is not set,
+so it would not produce a working image. The Nixpacks build keeps the full
+source tree and `node_modules` at `/app`, which is what makes the `payload` CLI
+available at runtime. It provides `npm`, not `pnpm`.
 
 If migrations don't run, the app starts against a database with no tables and
 every request fails.
@@ -20,7 +26,7 @@ every request fails.
 To add a migration after changing collections, globals or blocks:
 
 ```bash
-pnpm payload migrate:create <name>
+npx payload migrate:create <name>
 ```
 
 Commit the generated file. Never edit an already-deployed migration — add a new
@@ -28,8 +34,8 @@ one instead.
 
 ## Uploaded media needs a persistent volume
 
-The Dockerfile builds a standalone image, so anything written inside the
-container is lost on redeploy. Payload writes uploads to `public/media`.
+Anything written inside the container is lost on redeploy. Payload writes
+uploads to `public/media`, and the app runs from `/app`.
 
 Mount a persistent volume at `/app/public/media` in the Coolify service, or the
 media library empties every time you deploy.
@@ -67,7 +73,7 @@ It **deletes every existing page, case study and solution first**, so it refuses
 to run unless explicitly confirmed:
 
 ```bash
-ALLOW_DESTRUCTIVE_SEED=true pnpm payload run scripts/seed-botnizer.ts
+ALLOW_DESTRUCTIVE_SEED=true npx payload run scripts/seed-botnizer.ts
 ```
 
 Only run it against a database whose content you are willing to lose — normally
