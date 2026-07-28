@@ -5,12 +5,18 @@ import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { CaseStudiesBlock } from '../../blocks/CaseStudies/config'
+import { ContactSplit } from '../../blocks/ContactSplit/config'
 import { Content } from '../../blocks/Content/config'
 import { CTABanner } from '../../blocks/CTABanner/config'
+import { FeatureRow } from '../../blocks/FeatureRow/config'
 import { FormBlock } from '../../blocks/Form/config'
+import { HeroSlider } from '../../blocks/HeroSlider/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { MediaCollage } from '../../blocks/MediaCollage/config'
+import { PillCategories } from '../../blocks/PillCategories/config'
 import { SolutionsGrid } from '../../blocks/SolutionsGrid/config'
 import { StatsRow } from '../../blocks/StatsRow/config'
+import { Testimonial } from '../../blocks/Testimonial/config'
 import { TrustBar } from '../../blocks/TrustBar/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
@@ -88,6 +94,12 @@ export const Pages: CollectionConfig<'pages'> = {
                 TrustBar,
                 SolutionsGrid,
                 CaseStudiesBlock,
+                ContactSplit,
+                FeatureRow,
+                HeroSlider,
+                MediaCollage,
+                PillCategories,
+                Testimonial,
               ],
               required: true,
               admin: {

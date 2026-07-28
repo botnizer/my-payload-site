@@ -216,6 +216,12 @@ export interface Page {
     | TrustBarBlock
     | SolutionsGridBlock
     | CaseStudiesBlock
+    | ContactSplitBlock
+    | FeatureRowBlock
+    | HeroSliderBlock
+    | MediaCollageBlock
+    | PillCategoriesBlock
+    | TestimonialBlock
   )[];
   meta?: {
     title?: string | null;
@@ -1072,6 +1078,166 @@ export interface CaseStudy {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactSplitBlock".
+ */
+export interface ContactSplitBlock {
+  heading?: string | null;
+  intro?: string | null;
+  form: number | Form;
+  panelTitle?: string | null;
+  steps?:
+    | {
+        /**
+         * e.g. "Immediate confirmation".
+         */
+        title: string;
+        /**
+         * e.g. "with calendar invite".
+         */
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactSplit';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureRowBlock".
+ */
+export interface FeatureRowBlock {
+  heading: string;
+  description?: string | null;
+  /**
+   * Shown as small outlined tags beneath the copy.
+   */
+  bullets?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  image?: (number | null) | Media;
+  /**
+   * Alternate this down the page, as in the design.
+   */
+  mediaPosition?: ('right' | 'left') | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featureRow';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroSliderBlock".
+ */
+export interface HeroSliderBlock {
+  slides: {
+    eyebrow?: string | null;
+    heading: string;
+    description?: string | null;
+    image: number | Media;
+    links?:
+      | {
+          link: {
+            type?: ('reference' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: number | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: number | Post;
+                } | null);
+            url?: string | null;
+            label: string;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    id?: string | null;
+  }[];
+  /**
+   * Seconds between slides. Set to 0 to disable autoplay.
+   */
+  autoplaySeconds?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroSlider';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaCollageBlock".
+ */
+export interface MediaCollageBlock {
+  heading?: string | null;
+  images: {
+    image: number | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaCollage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PillCategoriesBlock".
+ */
+export interface PillCategoriesBlock {
+  heading?: string | null;
+  intro?: string | null;
+  pills?:
+    | {
+        label: string;
+        tone: 'green' | 'blue' | 'purple' | 'orange';
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pillCategories';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialBlock".
+ */
+export interface TestimonialBlock {
+  quote: string;
+  name?: string | null;
+  role?: string | null;
+  avatar?: (number | null) | Media;
+  /**
+   * Leave empty to hide the stars.
+   */
+  rating?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonial';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1391,6 +1557,12 @@ export interface PagesSelect<T extends boolean = true> {
         trustBar?: T | TrustBarBlockSelect<T>;
         solutionsGrid?: T | SolutionsGridBlockSelect<T>;
         caseStudies?: T | CaseStudiesBlockSelect<T>;
+        contactSplit?: T | ContactSplitBlockSelect<T>;
+        featureRow?: T | FeatureRowBlockSelect<T>;
+        heroSlider?: T | HeroSliderBlockSelect<T>;
+        mediaCollage?: T | MediaCollageBlockSelect<T>;
+        pillCategories?: T | PillCategoriesBlockSelect<T>;
+        testimonial?: T | TestimonialBlockSelect<T>;
       };
   meta?:
     | T
@@ -1577,6 +1749,134 @@ export interface CaseStudiesBlockSelect<T extends boolean = true> {
         label?: T;
         url?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactSplitBlock_select".
+ */
+export interface ContactSplitBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  form?: T;
+  panelTitle?: T;
+  steps?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureRowBlock_select".
+ */
+export interface FeatureRowBlockSelect<T extends boolean = true> {
+  heading?: T;
+  description?: T;
+  bullets?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  image?: T;
+  mediaPosition?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroSliderBlock_select".
+ */
+export interface HeroSliderBlockSelect<T extends boolean = true> {
+  slides?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        description?: T;
+        image?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  autoplaySeconds?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaCollageBlock_select".
+ */
+export interface MediaCollageBlockSelect<T extends boolean = true> {
+  heading?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PillCategoriesBlock_select".
+ */
+export interface PillCategoriesBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  pills?:
+    | T
+    | {
+        label?: T;
+        tone?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialBlock_select".
+ */
+export interface TestimonialBlockSelect<T extends boolean = true> {
+  quote?: T;
+  name?: T;
+  role?: T;
+  avatar?: T;
+  rating?: T;
   id?: T;
   blockName?: T;
 }
