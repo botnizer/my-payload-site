@@ -19,6 +19,7 @@
   h6 {
     font-weight: unset;
     font-size: unset;
+    font-family: var(--font-display);
   }
 }
 
@@ -44,7 +45,8 @@
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 86rem;
   --font-mono: var(--font-geist-mono);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-open-sans);
+  --font-display: var(--font-fira-sans);
 }
 
 @layer utilities {
@@ -81,37 +83,70 @@
 
   @variant 2xl {
     .container {
-      max-width: var(--breakpoint-2xl);
+      /* 1364px - 2rem gutters each side = the 1300px content column used in Figma */
+      max-width: var(--site-container);
+    }
+  }
+
+  /* Sections that run wider than the standard content column (feature rows, hero media) */
+  .container-wide {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1rem;
+    max-width: var(--site-container-wide);
+  }
+
+  @variant md {
+    .container-wide {
+      padding-inline: 2rem;
     }
   }
 }
 
 :root {
+  /*
+   * Botnizer brand palette.
+   * Source: Figma "Botnizer Final" → Botnizer Branding board (node 33:8702).
+   * The Figma file defines no colour variables, so these are transcribed by hand —
+   * update them here rather than in individual components.
+   */
+  --brand-green: #0f9300; /* Performance, growth, success — primary CTAs, positive metrics */
+  --brand-purple: #8827ff; /* Innovation, technology — accents, hover states, highlights */
+  --brand-blue: #003ef6; /* Trust, reliability — trust indicators, security messaging */
+  --brand-orange: #ffab5b; /* Energy, action, confidence */
+  --brand-charcoal: #242829; /* Strength, authority — body copy and light-on-dark sections */
+  --brand-gray: #464a4b; /* Balance, neutrality — secondary copy */
+  --brand-ink: #2a2b3a; /* Figma variable "Stock" — full-bleed dark section backgrounds */
+
+  /* 1364px / 1440px content columns from the Figma frames, incl. 2rem gutters */
+  --site-container: 85.25rem;
+  --site-container-wide: 90rem;
+
   --background: oklch(100% 0 0deg);
-  --foreground: oklch(14.5% 0 0deg);
+  --foreground: var(--brand-charcoal);
   --card: oklch(96.5% 0.005 265deg);
-  --card-foreground: oklch(14.5% 0 0deg);
+  --card-foreground: var(--brand-charcoal);
   --popover: oklch(100% 0 0deg);
-  --popover-foreground: oklch(14.5% 0 0deg);
-  --primary: oklch(20.5% 0 0deg);
-  --primary-foreground: oklch(98.5% 0 0deg);
+  --popover-foreground: var(--brand-charcoal);
+  --primary: var(--brand-green);
+  --primary-foreground: #fff;
   --secondary: oklch(97% 0 0deg);
-  --secondary-foreground: oklch(20.5% 0 0deg);
+  --secondary-foreground: var(--brand-charcoal);
   --muted: oklch(97% 0 0deg);
-  --muted-foreground: oklch(55.6% 0 0deg);
+  --muted-foreground: var(--brand-gray);
   --accent: oklch(97% 0 0deg);
   --accent-foreground: oklch(20.5% 0 0deg);
   --destructive: oklch(57.7% 0.245 27.325deg);
   --destructive-foreground: oklch(57.7% 0.245 27.325deg);
   --border: oklch(92.2% 0 0deg);
   --input: oklch(92.2% 0 0deg);
-  --ring: oklch(70.8% 0 0deg);
+  --ring: var(--brand-green);
   --chart-1: oklch(64.6% 0.222 41.116deg);
   --chart-2: oklch(60% 0.118 184.704deg);
   --chart-3: oklch(39.8% 0.07 227.392deg);
   --chart-4: oklch(82.8% 0.189 84.429deg);
   --chart-5: oklch(76.9% 0.188 70.08deg);
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --sidebar: oklch(98.5% 0 0deg);
   --sidebar-foreground: oklch(14.5% 0 0deg);
   --sidebar-primary: oklch(20.5% 0 0deg);
@@ -126,14 +161,16 @@
 }
 
 [data-theme='dark'] {
-  --background: oklch(14.5% 0 0deg);
+  /* Matches the full-bleed dark bands in the Figma design (API section, CTA banner, dark heroes) */
+  --background: var(--brand-ink);
   --foreground: oklch(98.5% 0 0deg);
-  --card: oklch(17% 0 0deg);
+  --card: var(--brand-charcoal);
   --card-foreground: oklch(98.5% 0 0deg);
-  --popover: oklch(14.5% 0 0deg);
+  --popover: var(--brand-ink);
   --popover-foreground: oklch(98.5% 0 0deg);
-  --primary: oklch(98.5% 0 0deg);
-  --primary-foreground: oklch(20.5% 0 0deg);
+  /* Green CTAs stay green on dark backgrounds, as in the design */
+  --primary: var(--brand-green);
+  --primary-foreground: #fff;
   --secondary: oklch(26.9% 0 0deg);
   --secondary-foreground: oklch(98.5% 0 0deg);
   --muted: oklch(26.9% 0 0deg);
@@ -144,7 +181,7 @@
   --destructive-foreground: oklch(63.7% 0.237 25.331deg);
   --border: oklch(26.9% 0 0deg);
   --input: oklch(26.9% 0 0deg);
-  --ring: oklch(43.9% 0 0deg);
+  --ring: var(--brand-green);
   --chart-1: oklch(48.8% 0.243 264.376deg);
   --chart-2: oklch(69.6% 0.17 162.48deg);
   --chart-3: oklch(76.9% 0.188 70.08deg);
@@ -164,6 +201,15 @@
 }
 
 @theme inline {
+  /* Brand palette — utilities such as bg-brand-green, text-brand-blue, border-brand-purple */
+  --color-brand-green: var(--brand-green);
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-charcoal: var(--brand-charcoal);
+  --color-brand-gray: var(--brand-gray);
+  --color-brand-ink: var(--brand-ink);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

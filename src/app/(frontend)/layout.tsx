@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
+import { Fira_Sans, Open_Sans } from 'next/font/google'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
@@ -16,11 +16,29 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 
+// Fira Sans is the display face and Open Sans the body face, per the Botnizer branding board.
+const firaSans = Fira_Sans({
+  display: 'swap',
+  subsets: ['latin'],
+  variable: '--font-fira-sans',
+  weight: ['400', '500', '600', '700'],
+})
+
+const openSans = Open_Sans({
+  display: 'swap',
+  subsets: ['latin'],
+  variable: '--font-open-sans',
+})
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
 
   return (
-    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
+    <html
+      className={cn(openSans.variable, firaSans.variable, GeistMono.variable)}
+      lang="en"
+      suppressHydrationWarning
+    >
       <head>
         <InitTheme />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
