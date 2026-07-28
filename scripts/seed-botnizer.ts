@@ -20,6 +20,23 @@ import { seedBotnizer } from '../src/endpoints/seed/botnizer'
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const run = async () => {
+  // This script DELETES every page, case study and solution before seeding.
+  // It must never run against a database with real content by accident, so it
+  // refuses unless explicitly confirmed and prints the target it would hit.
+  if (process.env.ALLOW_DESTRUCTIVE_SEED !== 'true') {
+    const target = process.env.DATABASE_URL?.replace(/:\/\/[^@]*@/, '://***@') ?? '(unset)'
+    console.error(
+      [
+        'Refusing to run: this seed deletes all pages, case studies and solutions.',
+        `Target database: ${target}`,
+        '',
+        'If that is really what you want, re-run with:',
+        '  ALLOW_DESTRUCTIVE_SEED=true pnpm payload run scripts/seed-botnizer.ts',
+      ].join('\n'),
+    )
+    process.exit(1)
+  }
+
   const payload = await getPayload({ config: configPromise })
 
   for (const collection of ['pages', 'case-studies', 'solutions'] as const) {
