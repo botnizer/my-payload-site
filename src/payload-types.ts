@@ -205,7 +205,18 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+    | CTABannerBlock
+    | StatsRowBlock
+    | TrustBarBlock
+    | SolutionsGridBlock
+    | CaseStudiesBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -778,6 +789,168 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CTABannerBlock".
+ */
+export interface CTABannerBlock {
+  title: string;
+  description?: string | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional artwork bleeding off the right edge of the banner.
+   */
+  image?: (number | null) | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'ctaBanner';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsRowBlock".
+ */
+export interface StatsRowBlock {
+  heading?: string | null;
+  intro?: string | null;
+  stats: {
+    /**
+     * The number itself, e.g. "+34%".
+     */
+    value: string;
+    /**
+     * What it measures, e.g. "Increase in peak hour throughput".
+     */
+    label: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'statsRow';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TrustBarBlock".
+ */
+export interface TrustBarBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  logos?:
+    | {
+        logo: number | Media;
+        /**
+         * Used as the image alt text when the upload has none.
+         */
+        name?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'trustBar';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SolutionsGridBlock".
+ */
+export interface SolutionsGridBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  intro?: string | null;
+  /**
+   * Order here controls the order on the page.
+   */
+  solutions: (number | Solution)[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'solutionsGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "solutions".
+ */
+export interface Solution {
+  id: number;
+  title: string;
+  /**
+   * The blurb shown on the card in the offerings grid.
+   */
+  shortDescription?: string | null;
+  /**
+   * Product shot used on the card.
+   */
+  image?: (number | null) | Media;
+  /**
+   * Where the card links to — usually the product page. Optional.
+   */
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CaseStudiesBlock".
+ */
+export interface CaseStudiesBlock {
+  heading?: string | null;
+  intro?: string | null;
+  populateBy?: ('collection' | 'selection') | null;
+  limit?: number | null;
+  selectedDocs?: (number | CaseStudy)[] | null;
+  /**
+   * The "See More" link below the grid. Hidden when the label is empty.
+   */
+  link?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'caseStudies';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "case-studies".
  */
 export interface CaseStudy {
@@ -888,53 +1061,6 @@ export interface CaseStudy {
   client?: string | null;
   clientLogo?: (number | null) | Media;
   publishedAt?: string | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "solutions".
- */
-export interface Solution {
-  id: number;
-  title: string;
-  /**
-   * The blurb shown on the card in the offerings grid.
-   */
-  shortDescription?: string | null;
-  /**
-   * Product shot used on the card.
-   */
-  image?: (number | null) | Media;
-  /**
-   * Where the card links to — usually the product page. Optional.
-   */
-  links?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -1260,6 +1386,11 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        ctaBanner?: T | CTABannerBlockSelect<T>;
+        statsRow?: T | StatsRowBlockSelect<T>;
+        trustBar?: T | TrustBarBlockSelect<T>;
+        solutionsGrid?: T | SolutionsGridBlockSelect<T>;
+        caseStudies?: T | CaseStudiesBlockSelect<T>;
       };
   meta?:
     | T
@@ -1356,6 +1487,96 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CTABannerBlock_select".
+ */
+export interface CTABannerBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  image?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsRowBlock_select".
+ */
+export interface StatsRowBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TrustBarBlock_select".
+ */
+export interface TrustBarBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  logos?:
+    | T
+    | {
+        logo?: T;
+        name?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SolutionsGridBlock_select".
+ */
+export interface SolutionsGridBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  intro?: T;
+  solutions?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CaseStudiesBlock_select".
+ */
+export interface CaseStudiesBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  populateBy?: T;
+  limit?: T;
+  selectedDocs?: T;
+  link?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
   id?: T;
   blockName?: T;
 }

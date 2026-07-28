@@ -17,6 +17,9 @@ const buttonVariants = cva(
         secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
+        // The green gradient pill used for every primary CTA in the Botnizer design
+        brand:
+          'rounded-full border border-brand-green bg-[linear-gradient(-12deg,#0a6500_0%,#63de55_100%)] text-white shadow-[0_4px_12px_rgba(15,147,0,0.55)] hover:brightness-110',
       },
       size: {
         clear: '',
@@ -24,6 +27,7 @@ const buttonVariants = cva(
         sm: 'h-9 rounded-md px-3 has-[>svg]:px-2.5',
         lg: 'h-11 rounded-md px-8 has-[>svg]:px-4',
         icon: 'size-10',
+        pill: 'h-auto px-10 py-2.5 text-base',
       },
     },
     defaultVariants: {

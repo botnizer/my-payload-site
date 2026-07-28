@@ -4,9 +4,14 @@ import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
+import { CaseStudiesBlock } from '../../blocks/CaseStudies/config'
 import { Content } from '../../blocks/Content/config'
+import { CTABanner } from '../../blocks/CTABanner/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { SolutionsGrid } from '../../blocks/SolutionsGrid/config'
+import { StatsRow } from '../../blocks/StatsRow/config'
+import { TrustBar } from '../../blocks/TrustBar/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -72,7 +77,18 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
+              blocks: [
+                CallToAction,
+                Content,
+                MediaBlock,
+                Archive,
+                FormBlock,
+                CTABanner,
+                StatsRow,
+                TrustBar,
+                SolutionsGrid,
+                CaseStudiesBlock,
+              ],
               required: true,
               admin: {
                 initCollapsed: true,

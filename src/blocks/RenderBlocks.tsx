@@ -4,16 +4,26 @@ import type { Page } from '@/payload-types'
 
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { CaseStudiesBlock } from '@/blocks/CaseStudies/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
+import { CTABannerBlock } from '@/blocks/CTABanner/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { SolutionsGridBlock } from '@/blocks/SolutionsGrid/Component'
+import { StatsRowBlock } from '@/blocks/StatsRow/Component'
+import { TrustBarBlock } from '@/blocks/TrustBar/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
+  caseStudies: CaseStudiesBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
+  ctaBanner: CTABannerBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
+  solutionsGrid: SolutionsGridBlock,
+  statsRow: StatsRowBlock,
+  trustBar: TrustBarBlock,
 }
 
 export const RenderBlocks: React.FC<{
