@@ -80,11 +80,16 @@ const SOLUTIONS = [
   },
 ]
 
+/**
+ * PLACEHOLDER CONTENT. These stories, clients and figures are invented to
+ * exercise the layouts — they are not real customers or real results. Replace or
+ * delete every one of them in the admin before the site is publicly reachable.
+ */
 const CASE_STUDIES = [
   {
     title: 'Managing complex customizations during lunch rush',
     slug: 'managing-complex-customizations',
-    client: 'Quick Serve Group',
+    client: 'PLACEHOLDER — real client name required',
     solutionSummary: 'Botnizer Smart Modifiers & Station Routing',
     resultsSummary: '40% faster build times, 95% order accuracy',
     metrics: [
@@ -96,7 +101,7 @@ const CASE_STUDIES = [
   {
     title: 'Inconsistent quality across food trucks and brick-and-mortar',
     slug: 'inconsistent-quality-across-locations',
-    client: 'Street Eats Co.',
+    client: 'PLACEHOLDER — real client name required',
     solutionSummary: 'Unified cloud-based platform for all locations',
     resultsSummary: 'Standardised processes, 30% faster service',
     metrics: [
@@ -107,7 +112,7 @@ const CASE_STUDIES = [
   {
     title: 'Delivery timing and driver coordination',
     slug: 'delivery-timing-and-driver-coordination',
-    client: 'Metro Kitchen',
+    client: 'PLACEHOLDER — real client name required',
     solutionSummary: 'Integrated delivery dispatch with kitchen coordination',
     resultsSummary: '25% faster delivery, 18% more deliveries per shift',
     metrics: [
@@ -417,14 +422,14 @@ export const seedBotnizer = async ({
             { value: '99.9%', label: 'Uptime' },
           ],
         },
+        // Deliberately unattributed. The testimonial block renders whatever it
+        // is given, and seeded copy is placeholder — putting invented words in a
+        // named real person's mouth is not something a seed should do. Add the
+        // real quote and attribution in the admin before this page goes public.
         {
           blockType: 'testimonial',
-          quote:
-            'We built Botnizer because restaurant operators deserve technology that works as hard as they do.',
-          name: 'Salman Asim',
-          role: 'Founder & CEO',
+          quote: 'PLACEHOLDER — replace with a real customer quote before launch.',
           rating: 5,
-          avatar: image,
         },
         trustBar,
         ctaBanner,
