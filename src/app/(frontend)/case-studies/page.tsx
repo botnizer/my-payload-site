@@ -5,20 +5,22 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 import { CaseStudyCard } from '@/components/CaseStudyCard'
+import { buildSafeQuery, emptyPaginatedDocs } from '@/utilities/buildSafeQuery'
+import type { CaseStudy } from '@/payload-types'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
 
 export default async function CaseStudiesPage() {
-  const payload = await getPayload({ config: configPromise })
-
-  const caseStudies = await payload.find({
-    collection: 'case-studies',
-    depth: 1,
-    limit: 24,
-    overrideAccess: false,
-    sort: '-publishedAt',
-  })
+  const caseStudies = await buildSafeQuery(emptyPaginatedDocs<CaseStudy>(), async () =>
+    (await getPayload({ config: configPromise })).find({
+      collection: 'case-studies',
+      depth: 1,
+      limit: 24,
+      overrideAccess: false,
+      sort: '-publishedAt',
+    }),
+  )
 
   return (
     <div className="pt-24 pb-24">

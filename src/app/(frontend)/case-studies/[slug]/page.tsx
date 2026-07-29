@@ -13,19 +13,22 @@ import { Media } from '@/components/Media'
 import { generateMeta } from '@/utilities/generateMeta'
 import { StarIcon } from 'lucide-react'
 import PageClient from './page.client'
+import { buildSafeQuery, emptyPaginatedDocs } from '@/utilities/buildSafeQuery'
+import type { CaseStudy } from '@/payload-types'
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const caseStudies = await payload.find({
-    collection: 'case-studies',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
+  const caseStudies = await buildSafeQuery(emptyPaginatedDocs<{ id: number; slug: string }>(), async () =>
+    (await getPayload({ config: configPromise })).find({
+      collection: 'case-studies',
+      draft: false,
+      limit: 1000,
+      overrideAccess: false,
+      pagination: false,
+      select: {
+        slug: true,
+      },
+    }),
+  )
 
   return caseStudies.docs.map(({ slug }) => ({ slug }))
 }
@@ -193,20 +196,20 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 const queryCaseStudyBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'case-studies',
-    draft,
-    limit: 1,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      slug: {
-        equals: slug,
+  const result = await buildSafeQuery(emptyPaginatedDocs<CaseStudy>(), async () =>
+    (await getPayload({ config: configPromise })).find({
+      collection: 'case-studies',
+      draft,
+      limit: 1,
+      overrideAccess: draft,
+      pagination: false,
+      where: {
+        slug: {
+          equals: slug,
+        },
       },
-    },
-  })
+    }),
+  )
 
   return result.docs?.[0] || null
 })
