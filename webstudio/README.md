@@ -287,11 +287,48 @@ Each website page exists in two desktop revisions plus a mobile revision.
 | `/` | QSR design export (not Figma) | built, published |
 | `/new-home` | 65:49189 | built, published |
 | `/contact` | 4:37561 (Set B) | built, published |
-| Solutions, Digital Signage, Drive-Thru, Case Study, Case Study Detailed, About us | Set B | **not built yet** |
+| `/solutions` | 4:35995 (Set B) | built, published |
+| Digital Signage, Drive-Thru, Case Study, Case Study Detailed, About us | Set B | **not built yet** |
 | Mobile layouts (all pages) | 393px frames | **not built yet** |
 
 `build-figma-contact.mjs` generates `/contact` and reuses `nav`, `footer` and
 `caseStudies` from `build-figma-home.mjs`, so shared chrome stays in one place.
+Note the shared-fragment import is `./fig-gen.mjs` — copy `build-figma-home.mjs`
+to that name in the working folder before running the other generators.
+
+## Figma "Solutions Page" build
+
+`build-figma-solutions.mjs` generates `/solutions` from node `4:35995`
+("Solutions Page", Set B, 1440×7263).
+
+Sections, in Figma node order: Nav Bar (4:36301), Hero (4:36103 slider +
+4:36287 heading), Measurable Results (4:36284), Solution/offerings heading
+(4:36107) + Offering items (4:36110), Solution Categories (4:36286), Platform
+Advantage (4:36285), Success Stories (4:36290), CTA form (4:36112), Footer
+(4:36229).
+
+`Offering items` (4:36110) and the three Success Stories cards (4:36297-99) are
+the *same* Figma components the home page uses, so the generator imports
+`offering` and `caseStudies` from `fig-gen.mjs` rather than rebuilding them.
+
+### Deviations from the Figma frame
+
+- **CTA "Waves" background art** (4:36113, ~40 nested vector paths) is replaced
+  with a radial gradient on `#111111`. The vectors are decorative.
+- **Solution Categories radial gradient** is approximated with a CSS
+  `radial-gradient`; the design uses an SVG `radialGradient` with a matrix
+  transform.
+- **Absolute insets → responsive grids**, as on the other Figma pages. The
+  Platform Advantage row is a 4-up `auto-fit` grid rather than the design's
+  hand-offset cards (the 4th card sits 4% lower than the other three).
+- **Hero image** is the slider frame exported and transcoded to a 1600px-wide
+  JPEG (239 KB). The design's `Slider` is an 8-image carousel; only the first
+  slide is used, and there is no carousel behaviour — that needs a Webstudio
+  interaction.
+- The **"biggest operational challenge"** control is a text input with a
+  placeholder; the design shows a select whose options are not in the file.
+- The CTA band anchors as `#get-in-touch`, not `#contact` — the shared footer
+  already owns `id="contact"`, and two of them is an audit error.
 
 ### Mobile approach
 
@@ -309,6 +346,23 @@ Project breakpoints: Base, Tablet (≤991), Mobile landscape (≤767), Mobile
 portrait (≤479). So mobile is a second pass over the instance ids returned by
 `insert-fragment`, not a change to the fragment itself. Verify with
 `screenshot.responsive` / `verify-page-responsive`.
+
+### Tool input shapes that are easy to get wrong
+
+| Tool | Correct input | Wrong guess |
+| --- | --- | --- |
+| `upload-assets` | `{"assets":[{"name":"file.jpg"}]}` — array of **objects** with a `name`, resolved against `.webstudio/assets/` | `{"files":[...]}` or `{"assets":["file.jpg"]}` — both rejected |
+| `update-page-settings` | `{"pageId":..,"values":{"title":..,"description":..}}` — the schema is **flat** | `values.meta.description` — silently accepted, returns `ok: true`, and drops the value |
+| `update-page-settings` strings | `title`/`description` are stored as **JS expressions**, so the value must include its own quotes: `"\"My title\""` | a bare string |
+| `screenshot.responsive` | needs `viewports` (1–8 objects) **and** a `url` or `path` | `{"pageId":...}` alone |
+| `list-texts` | paginates at 20; page with `{"cursor":"20"}`. A `limit` key makes the call fail | `{"limit":500}` |
+
+Because `title`/`description` are expression strings, generate them with
+`json.dumps(s, ensure_ascii=False)` — with `ensure_ascii` left on, an em dash
+lands in the page title as a literal `—`.
+
+Verify settings actually persisted with `get-page` afterwards; the mutation
+reports success either way.
 
 ### Large design-context responses
 
