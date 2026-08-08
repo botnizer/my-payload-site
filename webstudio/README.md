@@ -324,6 +324,31 @@ as are two of the collage tiles (`dt-audio`, `dt-bright`).
   Trial" but renders the Ready-to-Transform headline; the rendered copy is
   what was built.
 
+## Figma "About us" build
+
+`build-figma-about.mjs` generates `/about` from node `4:37370` (Set B,
+1440×7744): hero, The Art of Connection band, the Purpose / Vision / Mission
+trio, Our Impact stats, Hear from Our CEO, the home page's `trust` band
+(the design's "Trusted by / 100+ Businesses" logo wall is the same
+component), and the free-trial CTA.
+
+`get_design_context` on this frame returns ~65K characters and exceeds the
+tool's token limit. It saves the payload to a file; the copy, image
+constants and type styles were extracted from it with a Python script rather
+than read whole — see the note under "Large design-context responses".
+
+### Deviations from the Figma frame
+
+- **The CEO quote is Lorem Ipsum** in the design and is carried over verbatim.
+  It needs real copy.
+- **The Art of Connection video does not play.** The design shows a video
+  player; the file has no playable source, so the poster frame is used with
+  the play glyph as a static overlay.
+- The Our Impact figures are bare numbers in the design (`40`, `98.2`, `28`,
+  `99.9`) with no unit — reproduced as-is; they most likely want `%`.
+- The Our Purpose image and the CTA mockup are byte-identical to
+  `fig-drive-thru` and `ds-cta` respectively and are reused.
+
 ## Shared fragments
 
 | Module | Exports | Used by |
@@ -366,7 +391,8 @@ Each website page exists in two desktop revisions plus a mobile revision.
 | `/solutions` | 4:35995 (Set B) | built, published |
 | `/drive-thru` | 4:36578 (Set B) | built, published |
 | `/digital-signage` | 4:36302 (Set B) | built, published |
-| Case Study, Case Study Detailed, About us | Set B | **not built yet** |
+| `/about` | 4:37370 (Set B) | built, published |
+| Case Study, Case Study Detailed | Set B | **not built yet** |
 | Mobile layouts (all pages) | 393px frames | **not built yet** |
 
 `build-figma-contact.mjs` generates `/contact` and reuses `nav`, `footer` and
