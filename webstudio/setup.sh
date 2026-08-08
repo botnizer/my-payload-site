@@ -34,6 +34,11 @@ echo "==> target folder : $TARGET_DIR"
 echo "==> project host  : $ORIGIN_HOST"
 echo "==> api host      : $BASE_HOST"
 
+# Node's built-in fetch ignores HTTPS_PROXY unless told otherwise (Node >= 22.21),
+# so the CLI fails behind a proxy even when curl to the same host succeeds.
+# No-op on machines with no proxy configured.
+export NODE_USE_ENV_PROXY=1
+
 mkdir -p "$TARGET_DIR"
 cd "$TARGET_DIR"
 

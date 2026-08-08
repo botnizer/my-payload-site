@@ -75,6 +75,59 @@ writes the credential to disk — the first command that actually needs the API
 `webstudio.botnizer.com` to the environment's network egress allowlist, not by
 disabling TLS verification or bypassing the proxy.
 
+### Behind an HTTP proxy
+
+Node's built-in `fetch` does not read `HTTPS_PROXY` on its own, so the CLI can
+fail with that same allowlist error while `curl` to the identical host
+succeeds. Run it with `NODE_USE_ENV_PROXY=1` (Node >= 22.21); `setup.sh`
+exports this already.
+
+## Known issue: `sync` is refused by this instance
+
+`webstudio sync` fails against `webstudio.botnizer.com` with:
+
+```
+x  This version of the Webstudio CLI is incompatible with the current API.
+```
+
+**Updating the CLI does not fix this**, and the message is misleading. What
+actually happens: `sync` makes a single request to
+`build.loadProjectBundleByProjectId`, and the server answers `412` with
+
+```json
+{"apiCompatibility":{"reason":"clientVersionUnsupported","target":"cli",
+ "action":{"type":"updateCli"}}}
+```
+
+Probing that endpoint directly shows the gate keys off the **client identity
+header, not the version number**:
+
+| Request | Result |
+| --- | --- |
+| no `x-webstudio-client` header | `200`, full project bundle |
+| `x-webstudio-client: cli`, version `0.288.0` (npm latest) | `412` |
+| `x-webstudio-client: cli`, version `0.289.0` / `0.300.0` / `1.0.0` / `999.0.0` | `412` |
+| `x-webstudio-client-version` alone, no client header | `200` |
+
+Since no version value is accepted, this is a server-side configuration on the
+self-hosted instance rejecting CLI clients for that procedure — it needs fixing
+on the Webstudio deployment, not in this folder.
+
+### What works despite that
+
+Only the bundle-download path is gated. Verified working against the live
+project:
+
+- `webstudio permissions` — role `builders`; permits `view, edit, build, api`;
+  `canPublishProjectDomain: true`, `canPublish: false`
+- `webstudio meta.index`, `webstudio list-pages --json` and the rest of the MCP
+  tool surface (this is the path for editing the project programmatically)
+- `webstudio publish list --json`, `webstudio domains list --json`
+
+So the project can be read and edited over MCP without `sync`. Note that
+`webstudio build` consumes the synced bundle, so it stays blocked until the
+server-side gate is lifted.
+
 ## Design export
 
 The `QSR_Digital_Transformation_Website.zip` export that accompanies this setup
