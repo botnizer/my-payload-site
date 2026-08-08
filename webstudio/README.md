@@ -259,6 +259,43 @@ headings, `#464A4B` body, `#F1F1F1` offering cards, `#E6E9EE` stat borders,
   powerful dataset…"), and the footer paragraph is Lorem Ipsum. Both are
   carried over verbatim rather than invented.
 
+## Figma "Drive-Thru Page" build
+
+`build-figma-drive-thru.mjs` generates `/drive-thru` from node `4:36578`
+("Drive-Thru Page", Set B, 1440×10542).
+
+Sections: Nav Bar, Hero (4:36686 slider + 4:36691 heading), Bottleneck Problem
+(4:36692), product visual (4:36953), three alternating product bands —
+High-Brightness Displays (4:36694), Integrated Audio Systems (4:36695), Smart
+Media Players (4:36696) — AI-Powered Optimization (4:36697), ROI Calculator
+(4:36698), Seamless Integration (4:36776), Success Stories (4:36777), CTA
+(4:36834), Footer.
+
+The Smart Media Players image is byte-identical to the already-uploaded
+`fig-menu-board` asset, so it is reused rather than re-uploaded. Two of the
+four AI-Optimization icons are the same glyphs as the Solutions page's
+Platform Advantage cards (`zXkO4B`, `lO2Ca6`) and are reused as well.
+
+### Deviations from the Figma frame
+
+- **The ROI calculator does not calculate.** The design (4:36698) is a live
+  widget whose Totals panel recomputes from the form inputs and a dilution
+  slider. It is built as a static form showing the design's own figures;
+  wiring it needs Webstudio variables and expressions.
+- **The calculator's copy is placeholder** and reads as boilerplate from an
+  equity-compensation template — "Maths is confusing. However, maths are a
+  crucial part of your compensation", plus Totals rows labelled "Quantity of
+  options" and "Total cost of outstanding shares". Carried over verbatim
+  rather than invented; it needs real drive-thru copy.
+- **Success Stories testimonials are lorem-style placeholder text**
+  ("Blessing welcomed ladyship she met humoured sir breeding her."), both
+  attributed to "Linda, Project Manager". Also verbatim from the design.
+- **CTA "Waves" background art** replaced with a radial gradient, as on
+  Solutions.
+- Absolute insets rebuilt as responsive grids; the product bands alternate
+  via `order` rather than fixed left/right coordinates.
+- Hero uses the first slide of the 8-image `Slider`; no carousel behaviour.
+
 ## Figma page inventory (file `YcekX1kGhoti7ssk1sOlnr`)
 
 The design file holds three top-level Figma pages: `Botnizer Final Website
@@ -288,7 +325,8 @@ Each website page exists in two desktop revisions plus a mobile revision.
 | `/new-home` | 65:49189 | built, published |
 | `/contact` | 4:37561 (Set B) | built, published |
 | `/solutions` | 4:35995 (Set B) | built, published |
-| Digital Signage, Drive-Thru, Case Study, Case Study Detailed, About us | Set B | **not built yet** |
+| `/drive-thru` | 4:36578 (Set B) | built, published |
+| Digital Signage, Case Study, Case Study Detailed, About us | Set B | **not built yet** |
 | Mobile layouts (all pages) | 393px frames | **not built yet** |
 
 `build-figma-contact.mjs` generates `/contact` and reuses `nav`, `footer` and
