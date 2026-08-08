@@ -216,3 +216,45 @@ without the host suffix the instance appends when serving published sites, and
 `domains list` is empty until a custom domain is added. In a sandbox that means
 the published URL cannot be derived or reached for screenshot verification
 unless the publishing host is also on the egress allowlist.
+
+## Figma "New Home Page" build
+
+`build-figma-home.mjs` generates the `/new-home` page from the Figma design
+`YcekX1kGhoti7ssk1sOlnr`, node `65:49189` ("New Home Page-updated", 1440×9603).
+
+```bash
+cd ~/Desktop/webstudio-qsr
+node -e 'import("./build-figma-home.mjs").then(m => /* compose + write insert-fragment input */ 0)'
+npx webstudio insert-fragment --input-file .temp/fig-page.json
+```
+
+Sections, in Figma node order: Nav Bar (65:49368), Hero (65:49366), Trust Bar
+(65:49356), Vision (65:49352), Elevate your brand (65:49353/4), Offering items
+(65:49357), Technical (65:49360), Results (65:49361), Case Study cards
+(65:49362), Footer (65:49297).
+
+Design values are taken from the Figma nodes: Fira Sans throughout, `#13C000`
+nav rule, `#15CA01` hero subhead, `#0F9300` technical highlights, `#333333`
+headings, `#464A4B` body, `#F1F1F1` offering cards, `#E6E9EE` stat borders,
+`#0033C3` links.
+
+### Deviations from the Figma file
+
+- **Absolute positioning → flow layout.** The design positions most sections
+  with absolute insets at a fixed 1440px width. These are rebuilt as
+  `auto-fit` grids with `clamp()` type so the page is responsive; at 1440px it
+  reads as designed, but element positions are not pixel-identical.
+- **Technical section constellation.** The five integration nodes (Toast POS,
+  NCR Aloha, Kitchen Display, Micros, CRM) are scattered around the logo at
+  hand-placed coordinates with decorative connector line SVGs. They are
+  rebuilt as a centred row; the `Left Lines` / `Right Lines` connector art is
+  not included.
+- **Nav mega-menu** is captured in the design as an open dropdown panel. Only
+  the top bar is built; the panel needs a Webstudio interaction to drive it.
+- **Social icons** in the footer are not included.
+- **Hidden layers** in the frame (a "Tailored for the Modern Gentleman"
+  menswear design, plus duplicate `BG` frames) are ignored — they are marked
+  hidden in Figma.
+- The Results body copy is the designer's placeholder ("Trade Foresight's
+  powerful dataset…"), and the footer paragraph is Lorem Ipsum. Both are
+  carried over verbatim rather than invented.
