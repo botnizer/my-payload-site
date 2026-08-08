@@ -151,3 +151,51 @@ The brand values it carries, for reference:
 | Body text | `#333333` |
 | Display font | Fira Sans |
 | Body font | Poppins |
+
+## Home page build
+
+`build-home-page.mjs` generates the Webstudio JSX for the QSR home page from
+the design export's own data arrays (stations, products, differentiators,
+services, case studies, form needs) and writes `insert-fragment` input files.
+
+```bash
+cd ~/Desktop/webstudio-qsr
+node build-home-page.mjs <parentInstanceId>
+npx webstudio insert-fragment --input-file .temp/full.json --dry-run
+npx webstudio insert-fragment --input-file .temp/full.json
+```
+
+`.temp/full.json` replaces the page body with the whole page in one commit
+(`header` / `main` / `footer`), which is what keeps the `main` landmark check
+passing. The per-section files are useful for iterating on one band at a time.
+
+Structure: sticky header, hero, trust bar, five lane stations, hardware
+showcase, four in-restaurant products, four differentiators, six services,
+three case studies, quote form, footer. Brand palette and Fira Sans / Open
+Sans come from `figma/brand-schema.css` in the export.
+
+Layout is fluid rather than breakpoint-based — `clamp()` on type and section
+padding, `auto-fit` grids, wrapping nav — so it holds up from mobile to
+desktop without per-breakpoint overrides. Webstudio's three default
+breakpoints therefore carry no declarations, which the audit reports as
+`unused-breakpoint` (info).
+
+### Assets
+
+`upload-assets` resolves paths against `.webstudio/assets/`, so copy files
+there first. The instance rejects large uploads: `station-ordering-board.png`
+(2.0 MB) uploaded fine, `hero-drive-thru.mp4` (10.1 MB) returned `502 Bad
+Gateway`. The hero therefore uses a gradient rather than the design's video —
+either raise the upload limit on the instance or transcode the video below the
+limit and add it to the hero.
+
+### Verification
+
+`webstudio screenshot --path` and `webstudio preview` both need the generated
+local build, which needs `sync` — still blocked by the server-side gate above.
+So the page was verified with `webstudio audit` plus `list-texts` / 
+`list-instances` read-backs rather than pixels. Audit findings on `/` are
+clear; the remaining warnings belong to the untouched 404 page.
+
+Screenshots need an explicit browser in a headless sandbox:
+`WEBSTUDIO_BROWSER_PATH=/path/to/chromium`.
