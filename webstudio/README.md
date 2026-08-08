@@ -349,6 +349,37 @@ than read whole — see the note under "Large design-context responses".
 - The Our Purpose image and the CTA mockup are byte-identical to
   `fig-drive-thru` and `ds-cta` respectively and are reused.
 
+## Figma Case Study builds
+
+`build-figma-case-studies.mjs` generates `/case-studies` from node `4:37161`
+(Set B, 1440×5178): billboard hero, dark intro strip, "Real Results from
+Restaurant Leaders", the "Botnizer Talks" six-card grid, the reused trust
+band, an image gallery and the free-trial CTA.
+
+`build-figma-case-study-detail.mjs` generates `/case-studies/detail` from
+node `4:36956` (Set B, 1440×6320): hero with a dated title bar, the
+Overview / Objectives / Solutions article, the same gallery, the Results
+band, a testimonial, Success Stories (the shared `caseStudies` cards) and
+the CTA.
+
+Both frames exceed the `get_design_context` token limit; their copy and
+asset URLs were extracted from the saved payloads with a script.
+
+### Deviations from the Figma frames
+
+- **The six "Botnizer Talks" cards are three case studies shown twice.** The
+  design repeats the same titles, solutions and results with different
+  imagery, so the generator indexes the three-item `cases` array modulo 3
+  rather than inventing three more.
+- Several images in these frames are byte-identical to assets already in the
+  project — the Case Study Detailed hero is `fig-case-1`, the gallery's night
+  storefront is `ab-mcd`, and two "Botnizer Talks" tiles are `fig-case-2`
+  and `fig-case-3`. All are reused rather than re-uploaded.
+- "Read More" on the index cards links to `/case-studies/detail`; the design
+  has no per-case destinations.
+- The "Share" control in the detail hero is a static link — no share
+  behaviour is specified in the design.
+
 ## Shared fragments
 
 | Module | Exports | Used by |
@@ -392,8 +423,14 @@ Each website page exists in two desktop revisions plus a mobile revision.
 | `/drive-thru` | 4:36578 (Set B) | built, published |
 | `/digital-signage` | 4:36302 (Set B) | built, published |
 | `/about` | 4:37370 (Set B) | built, published |
-| Case Study, Case Study Detailed | Set B | **not built yet** |
+| `/case-studies` | 4:37161 (Set B) | built, published |
+| `/case-studies/detail` | 4:36956 (Set B) | built, published |
 | Mobile layouts (all pages) | 393px frames | **not built yet** |
+
+All eight desktop pages from the Figma file are now built. `webstudio audit`
+reports zero findings on every one of them; the remaining findings belong to
+the untouched `/*` 404 page and to `/contact` (a pre-existing duplicate
+`id="contact"` and an h1→h3 jump, both from the earlier build).
 
 `build-figma-contact.mjs` generates `/contact` and reuses `nav`, `footer` and
 `caseStudies` from `build-figma-home.mjs`, so shared chrome stays in one place.
