@@ -258,3 +258,61 @@ headings, `#464A4B` body, `#F1F1F1` offering cards, `#E6E9EE` stat borders,
 - The Results body copy is the designer's placeholder ("Trade Foresight's
   powerful dataset…"), and the footer paragraph is Lorem Ipsum. Both are
   carried over verbatim rather than invented.
+
+## Figma page inventory (file `YcekX1kGhoti7ssk1sOlnr`)
+
+The design file holds three top-level Figma pages: `Botnizer Final Website
+Design` (0:1), `Components` (4:31897), `Workshop` (4:31898). Note that
+`get_metadata` on `0:1` returns ~1.36M characters — too large to read
+directly; extract top-level frames from the saved tool output instead.
+
+Each website page exists in two desktop revisions plus a mobile revision.
+**Set B is the one to build from.**
+
+| Page | Set A (older) | Set B — use this | Mobile (393px) |
+| --- | --- | --- | --- |
+| Home | 4:2759 / 4:3362 | 65:49189 (New Home Page-updated) | 133:7947 |
+| Solutions | 4:24331 | 4:35995 | 155:48909 |
+| Digital Signage | 4:24715 | 4:36302 | 164:7365 |
+| Drive-Thru | 4:24991 | 4:36578 | 174:28914 |
+| Case Study Detailed | 4:25516 | 4:36956 | 164:48589 |
+| Case Study | 4:25721 | 4:37161 | 170:7779 |
+| About us | 4:25937 | 4:37370 | 170:28649 |
+| Contact us | 4:26147 | 4:37561 | 170:49856 |
+
+### Build status
+
+| Webstudio page | Source node | State |
+| --- | --- | --- |
+| `/` | QSR design export (not Figma) | built, published |
+| `/new-home` | 65:49189 | built, published |
+| `/contact` | 4:37561 (Set B) | built, published |
+| Solutions, Digital Signage, Drive-Thru, Case Study, Case Study Detailed, About us | Set B | **not built yet** |
+| Mobile layouts (all pages) | 393px frames | **not built yet** |
+
+`build-figma-contact.mjs` generates `/contact` and reuses `nav`, `footer` and
+`caseStudies` from `build-figma-home.mjs`, so shared chrome stays in one place.
+
+### Mobile approach
+
+Pages so far are fluid (`clamp()` + `auto-fit` grids), which reflows but does
+not follow the 393px mobile frames. Real per-breakpoint styling goes through
+`update-styles`, whose update items accept a `breakpoint` field:
+
+```json
+{"updates":[{"instanceId":"...","property":"fontSize",
+             "value":{"type":"unit","unit":"px","value":32},
+             "breakpoint":"Mobile portrait"}]}
+```
+
+Project breakpoints: Base, Tablet (≤991), Mobile landscape (≤767), Mobile
+portrait (≤479). So mobile is a second pass over the instance ids returned by
+`insert-fragment`, not a change to the fragment itself. Verify with
+`screenshot.responsive` / `verify-page-responsive`.
+
+### Large design-context responses
+
+`get_design_context` on a full page frame can exceed the token limit (the
+Contact us frame returned ~94K characters). The tool saves the payload to a
+file; extract copy, type styles and asset URLs from it with a script rather
+than reading it whole.
