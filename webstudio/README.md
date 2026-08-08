@@ -296,6 +296,45 @@ Platform Advantage cards (`zXkO4B`, `lO2Ca6`) and are reused as well.
   via `order` rather than fixed left/right coordinates.
 - Hero uses the first slide of the 8-image `Slider`; no carousel behaviour.
 
+## Figma "Digital Signage Page" build
+
+`build-figma-digital-signage.mjs` generates `/digital-signage` from node
+`4:36302` (Set B, 1440×8372).
+
+Sections: Nav, Hero (4:36465), stat strip (4:36472), pictures collage +
+intro (4:36574), three feature bands — Creative Studio (4:36471), Indoor
+Menu Boards (4:36575), Outdoor Menu Boards (4:36573) — Drive-Thru
+Optimization band (4:36473), the home page's Technical section (4:36478,
+imported from `fig-gen.mjs`), ROI calculator (4:36479 + 4:36555, imported
+from `fig-shared.mjs`), free-trial CTA (4:36556), Footer.
+
+All three feature images are byte-identical to assets already in the
+project (`fig-menu-board`, `fig-kiosk`, `fig-drive-thru`) and are reused,
+as are two of the collage tiles (`dt-audio`, `dt-bright`).
+
+### Deviations from the Figma frame
+
+- **Collage rebuilt as a CSS grid.** The design (4:36574) hand-places five
+  images; they are laid out as a responsive grid instead.
+- The free-trial CTA's mockup (4:36564) is a single flattened export rather
+  than the layered dashboard + phone composite.
+- The ROI calculator carries the same caveats as on Drive-Thru: static, and
+  its copy is equity-calculator placeholder text.
+- The layer for the CTA heading is named "Heading 3 → Get Your 14 Days Free
+  Trial" but renders the Ready-to-Transform headline; the rendered copy is
+  what was built.
+
+## Shared fragments
+
+| Module | Exports | Used by |
+| --- | --- | --- |
+| `fig-gen.mjs` (copy of `build-figma-home.mjs`) | `nav`, `footer`, `offering`, `caseStudies`, `technical`, `hero`, `trust`, `vision`, `elevate`, `results` | every Figma page |
+| `fig-shared.mjs` | JSX helpers, type/colour constants, `chip`, `iconCard`, `ctaForm`, `roiCalculator(heading, intro)` | Solutions, Drive-Thru, Digital Signage |
+
+`fig-shared.mjs` was extracted after the Drive-Thru build; Solutions and
+Drive-Thru were refactored onto it and verified to emit byte-identical
+fragments, so no re-insert was needed.
+
 ## Figma page inventory (file `YcekX1kGhoti7ssk1sOlnr`)
 
 The design file holds three top-level Figma pages: `Botnizer Final Website
@@ -326,7 +365,8 @@ Each website page exists in two desktop revisions plus a mobile revision.
 | `/contact` | 4:37561 (Set B) | built, published |
 | `/solutions` | 4:35995 (Set B) | built, published |
 | `/drive-thru` | 4:36578 (Set B) | built, published |
-| Digital Signage, Case Study, Case Study Detailed, About us | Set B | **not built yet** |
+| `/digital-signage` | 4:36302 (Set B) | built, published |
+| Case Study, Case Study Detailed, About us | Set B | **not built yet** |
 | Mobile layouts (all pages) | 393px frames | **not built yet** |
 
 `build-figma-contact.mjs` generates `/contact` and reuses `nav`, `footer` and

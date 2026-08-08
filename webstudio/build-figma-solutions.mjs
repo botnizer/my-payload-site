@@ -2,6 +2,7 @@
 // Reuses nav / offering / caseStudies / footer from fig-gen.mjs so shared chrome stays in one place.
 import fs from "node:fs";
 import { nav, footer, offering, caseStudies } from "./fig-gen.mjs";
+import { ctaForm } from "./fig-shared.mjs";
 
 const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
 const el = (t,s,c="",a="") => `<ws.element ws:tag="${t}"${a}${s?` ws:style={css\`${s}\`}`:""}>${c}</ws.element>`;
@@ -117,42 +118,7 @@ const stories = el("section",
   `display: flex; flex-direction: column; align-items: center; padding-top: clamp(48px, 6vw, 90px); padding-bottom: 0px; ${PAD} background-color: #FFFFFF;`,
   el("h2", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 600; font-size: clamp(28px, 3.2vw, 38px); letter-spacing: -1px; color: #333333; text-align: center;`, "Success Stories"));
 
-// ---- 7. CTA Section (4:36112) ----
-const fieldStyle = `padding-top: 13px; padding-bottom: 13px; padding-left: 12px; padding-right: 12px; border-radius: 8px; border-width: 1px; border-style: solid; border-color: #E6E9EE; background-color: #F9F9F9; font-family: ${POP}; font-size: 16px; color: #333333; width: 100%;`;
-const field = (label, tag, attrs) => el("label",
-  `display: flex; flex-direction: column; gap: 8px; font-family: ${POP}; font-weight: 400; font-size: 14px; color: #464A4B;`,
-  esc(label) + `<ws.element ws:tag="${tag}"${attrs} ws:style={css\`${fieldStyle}\`}></ws.element>`);
-
-const cta = el("section",
-  `padding-top: clamp(56px, 7vw, 100px); padding-bottom: clamp(56px, 7vw, 100px); ${PAD} background-color: #111111; background-image: radial-gradient(ellipse 80% 100% at 20% 40%, #2A2A2A 0%, #1A1A1A 45%, #111111 100%);`,
-  el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: center; max-width: 1300px; margin-left: auto; margin-right: auto;`,
-    el("div", `display: flex; flex-direction: column; max-width: 528px;`,
-      el("p", `margin-top: 0px; margin-bottom: 8px; font-family: ${POP}; font-weight: 400; font-size: 18px; color: #FFFFFF;`, "Get in Touch") +
-      el("h2", `margin-top: 0px; margin-bottom: 28px; font-family: ${POP}; font-weight: 700; font-size: clamp(32px, 4vw, 52px); line-height: 1.17; color: #FFFFFF;`, "Ready to Transform Your Restaurant Technology Stack?") +
-      el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${POP}; font-weight: 300; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.65; color: #FFFFFF;`,
-        "Schedule a personalized 30-minute consultation with our solutions team. See how the Botnizer platform integrates with your ecosystem to drive revenue and operational efficiency.")) +
-    el("form", `display: flex; flex-direction: column; gap: 20px; padding: 30px; border-radius: 20px; background-color: #FFFFFF;`,
-      field("Full Name","input",` type="text" name="fullName" required="true"`) +
-      field("Email","input",` type="email" name="email" required="true"`) +
-      el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;`,
-        field("Phone","input",` type="tel" name="phone"`) +
-        field("Country","input",` type="text" name="country"`)) +
-      field("Brand","input",` type="text" name="brand"`) +
-      field("Number of Locations","input",` type="text" name="locations"`) +
-      // 4:36211 is an unlabelled select showing placeholder text; keep it label-free
-      // visually but give it an accessible name.
-      el("input", fieldStyle + ` color: #464A4B;`, "",
-        ` type="text" name="challenge" placeholder="What’s your biggest operational challenge?" aria-label="What’s your biggest operational challenge?"`) +
-      field("Tell us more","textarea",` name="message" rows="6"`) +
-      el("button", `align-self: flex-start; padding-top: 12px; padding-bottom: 12px; padding-left: 34px; padding-right: 34px; border-radius: 999px; border-width: 0px; background-image: linear-gradient(-11.45deg, #0A6500 0%, #63DE55 100%); font-family: ${POP}; font-weight: 400; font-size: 16px; color: #FFFFFF; cursor: pointer;`,
-        "Request a Personalize Demo", ` type="submit"`) +
-      el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${POP}; font-weight: 400; font-size: 13px; color: #464A4B;`,
-        "By submitting, you agree to our " +
-        el("a", `color: #224EED; text-decoration-line: underline;`, "Privacy Policy", ` href="#privacy"`) +
-        // The reused footer already owns id="contact", so this band gets its own anchor.
-        ". No spam, ever.")), ` id="get-in-touch"`));
-
-const main = `<ws.element ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${results}${offeringsIntro}${offering}${categories}${advantage}${stories}${caseStudies}${cta}</ws.element>`;
+const main = `<ws.element ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${results}${offeringsIntro}${offering}${categories}${advantage}${stories}${caseStudies}${ctaForm}</ws.element>`;
 const page = `<ws.element ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
