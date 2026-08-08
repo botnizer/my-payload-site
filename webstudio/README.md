@@ -199,3 +199,20 @@ clear; the remaining warnings belong to the untouched 404 page.
 
 Screenshots need an explicit browser in a headless sandbox:
 `WEBSTUDIO_BROWSER_PATH=/path/to/chromium`.
+
+### Publishing
+
+```bash
+npx webstudio publish deploy --target staging --message "..." --json
+npx webstudio publish status --job <jobId> --json      # note: --job, not --job-id
+```
+
+The share-link token has `canPublishProjectDomain: true` and `canPublish:
+false`, so staging publishes to the project domain work and production does
+not.
+
+The API reports the project domain as a bare label (`web-botnizer-57ix6`)
+without the host suffix the instance appends when serving published sites, and
+`domains list` is empty until a custom domain is added. In a sandbox that means
+the published URL cannot be derived or reached for screenshot verification
+unless the publishing host is also on the egress allowlist.
