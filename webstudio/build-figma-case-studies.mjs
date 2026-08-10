@@ -71,7 +71,7 @@ const talks = el("section",
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; width: 100%; max-width: 1300px; margin-bottom: 40px;`,
     cardImages.map((imgSpec, i) => card(cases[i % 3], imgSpec)).join("")) +
   el("a", `display: inline-flex; align-items: center; justify-content: center; padding-top: 10px; padding-bottom: 10px; padding-left: 34px; padding-right: 34px; border-radius: 999px; border-width: 1px; border-style: solid; border-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #0F9300; text-decoration-line: none;`,
-    "See More", ` href="#top"`), ` id="cases"`);
+    "See More", ` href="/case-studies/detail"`), ` id="cases"`);
 
 // ---- 6. Gallery (4:37342) ----
 const gallery = el("section",
@@ -96,7 +96,7 @@ const trialCta = el("section",
         "Ready to Transform Your Restaurant Technology Stack?") +
       el("p", `margin-top: 0px; margin-bottom: 28px; font-family: ${POP}; font-weight: 300; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.62; color: #FFFFFF;`,
         "Schedule a personalized 30-minute consultation with our solutions team. See how the Botnizer platform integrates with your ecosystem to drive revenue and operational efficiency.") +
-      el("a", PILL + ` align-self: flex-start;`, "Request a Demo", ` href="#contact"`)) +
+      el("a", PILL + ` align-self: flex-start;`, "Request a Demo", ` href="/contact"`)) +
     img(A.cta, "Botnizer analytics dashboard on desktop and mobile",
         `width: 100%; height: auto; align-self: center; justify-self: end;`)));
 

@@ -12,16 +12,71 @@ export const A = {
 };
 const FIRA = `"Fira Sans", system-ui, sans-serif`;
 
-// ---- Nav Bar (65:49368) ----
-const navLinks = [["#what-we-do","What we do"],["#solutions","Solutions"],["#about","About"],["#cases","Case Study"],["#contact","Contact"]];
+// ---- Nav Bar (65:49368) + "What we do" dropdown panel (0:26 / 0:27) ----
+//
+// Site routes, in one place so the nav dropdown and the footer cannot drift.
+// Self-Ordering Kiosk, NFC Google Review Cards and Digital Menu Board have no
+// page of their own; they exist only as cards in the Solutions offering grid,
+// so they deep-link there.
+export const ROUTES = {
+  home: "/", solutions: "/solutions", driveThru: "/drive-thru",
+  signage: "/digital-signage", about: "/about", cases: "/case-studies",
+  caseDetail: "/case-studies/detail", contact: "/contact",
+  offering: "/solutions#solutions",
+};
+export const EXPERIENCE_LINKS = [["Drive-Thru", ROUTES.driveThru]];
+export const PRODUCT_LINKS = [
+  ["Digital Signage", ROUTES.signage],
+  ["Self-Ordering Kiosk", ROUTES.offering],
+  ["NFC Google Review Cards", ROUTES.offering],
+  ["Digital Menu Board", ROUTES.signage],
+  ["Drive-Thru Audio System", ROUTES.driveThru],
+];
+export const COMPANY_LINKS = [
+  ["About", ROUTES.about], ["Solutions", ROUTES.solutions], ["Case Study", ROUTES.cases],
+];
+
+const navLinks = [[ROUTES.solutions,"Solutions"],[ROUTES.about,"About"],[ROUTES.cases,"Case Study"],[ROUTES.contact,"Contact"]];
+const navLinkStyle = `font-family: ${FIRA}; font-weight: 300; font-size: clamp(15px, 1.4vw, 20px); color: #FFFFFF; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px; white-space: nowrap;`;
+
+// Panel column. Mirrors the footer's fcol so the two stay visually consistent.
+const panelCol = (heading, links) =>
+  el("div", `display: flex; flex-direction: column; gap: 14px;`,
+    el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 15px; letter-spacing: 0.5px; text-transform: uppercase; color: #9C9C9C;`, esc(heading)) +
+    el("div", `display: flex; flex-direction: column; gap: 4px;`,
+      links.map(([label, href]) => el("a",
+        `font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 26px; color: #333333; text-decoration-line: none; padding-top: 4px; padding-bottom: 4px;`,
+        esc(label), ` href="${href}"`)).join("")));
+
+// Webstudio's css template supports self-states (:hover / :focus-within) but not
+// descendant combinators, so the panel cannot be toggled with `&:hover .panel`.
+// Instead the trigger clips its own overflow and un-clips it on hover/focus,
+// which reveals the absolutely-positioned panel. :focus-within makes it reachable
+// by keyboard as well as pointer.
+const megaPanel = el("div",
+  `position: absolute; top: 100%; left: 0px; z-index: 60; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; width: min(1040px, calc(100vw - 140px)); margin-top: 14px; padding: 30px; border-radius: 10px; background-color: #FFFFFF; box-shadow: 0px 18px 50px 0px rgba(0,0,0,0.22);`,
+  panelCol("Experience", EXPERIENCE_LINKS) +
+  panelCol("Products", PRODUCT_LINKS) +
+  el("div", `display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 10px; background-color: #F3F3F3;`,
+    el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 20px; color: #333333;`, "Let&#39;s Get Started!") +
+    el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 17px; line-height: 25px; color: #333333;`, "We&#39;re here to listen and assist.") +
+    el("a", `align-self: flex-start; display: inline-flex; padding-top: 10px; padding-bottom: 10px; padding-left: 22px; padding-right: 22px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #FFFFFF; text-decoration-line: none;`,
+      "Contact us today", ` href="${ROUTES.contact}"`)));
+
+const whatWeDo = el("div",
+  `position: relative; display: flex; align-items: center; overflow: hidden; &:hover { overflow: visible; } &:focus-within { overflow: visible; }`,
+  el("a", navLinkStyle + ` display: inline-flex; align-items: center; gap: 8px;`,
+    "What we do" + img(A.chevron, "", `width: 12px; height: auto; flex-shrink: 0;`),
+    ` href="${ROUTES.solutions}"`) +
+  megaPanel);
+
 export const nav = el("header",
   `position: sticky; top: 0px; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 25px; padding-bottom: 25px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: rgba(51,51,51,0.92); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #13C000;`,
   el("a", `display: flex; align-items: center; gap: 5px; text-decoration-line: none; flex-shrink: 0;`,
-     img(A.logo, "Botnizer", `height: 34px; width: auto;`), ` href="#top"`) +
+     img(A.logo, "Botnizer", `height: 34px; width: auto;`), ` href="${ROUTES.home}"`) +
   el("nav", `display: flex; flex-wrap: wrap; align-items: center; gap: 30px;`,
-     navLinks.map(([h,t]) => el("a",
-       `font-family: ${FIRA}; font-weight: 300; font-size: clamp(15px, 1.4vw, 20px); color: #FFFFFF; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px; white-space: nowrap;`,
-       esc(t), ` href="${h}"`)).join("")));
+     whatWeDo +
+     navLinks.map(([h,t]) => el("a", navLinkStyle, esc(t), ` href="${h}"`)).join("")));
 
 // ---- Home Hero (65:49366) ----
 export const hero = el("section",
@@ -36,7 +91,7 @@ export const hero = el("section",
       el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: clamp(16px, 1.7vw, 24px); line-height: 1.45; color: #FFFFFF;`,
          "An API-first platform that unifies digital signage, self ordering kiosks, drive-thru systems, and checkout solutions into one seamless ecosystem.") +
       el("a", `display: inline-flex; align-items: center; justify-content: center; padding-top: 20px; padding-bottom: 20px; padding-left: 40px; padding-right: 40px; border-radius: 999px; background-color: #FFFFFF; color: #333333; font-family: ${FIRA}; font-weight: 600; font-size: clamp(17px, 1.6vw, 22px); letter-spacing: -1px; text-decoration-line: none; white-space: nowrap;`,
-         "Request a Demo", ` href="#contact"`))), ` id="top"`);
+         "Request a Demo", ` href="${ROUTES.contact}"`))), ` id="top"`);
 
 // ---- Trust Bar (65:49356) ----
 export const trust = el("section",
@@ -114,7 +169,7 @@ export const caseStudies = el("section",
           el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; letter-spacing: 0.36px; color: #464A4B;`,
             el("span", `font-weight: 500;`, "Solution:") + " " + solution + "<ws.element ws:tag=\"br\"></ws.element>" +
             el("span", `font-weight: 500;`, "Results:") + " " + esc(res)) +
-          el("a", `display: inline-flex; align-items: center; gap: 10px; font-family: ${FIRA}; font-weight: 400; font-size: 14px; line-height: 1.4; color: #0033C3; text-decoration-line: none;`, "Read More →", ` href="#cases"`)))).join("")), ` id="cases"`);
+          el("a", `display: inline-flex; align-items: center; gap: 10px; font-family: ${FIRA}; font-weight: 400; font-size: 14px; line-height: 1.4; color: #0033C3; text-decoration-line: none;`, "Read More →", ` href="${ROUTES.caseDetail}"`)))).join("")), ` id="cases"`);
 
 // ---- Technical (65:49360) ----
 const integrations = [["cdkhmIrpwW3T6HQnyNCNF","Toast POS"],["SCeTgxgnQMJ6uY7-5Lm5Z","NCR Aloha"],["tu_tMDg9xB6i7p4heNTve","Kitchen Display"],["sH5ZMAYft7s2bSKXf19DY","Micros"],["sDBLLj0UbzXNKsh6PODJS","CRM"]];
@@ -134,7 +189,7 @@ export const technical = el("section",
         el("div", `display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 9px; background-color: #FFFFFF;`,
           img(id, esc(label), `width: 32px; height: auto;`)) +
         el("span", `font-family: ${FIRA}; font-weight: 400; font-size: 15.6px; line-height: 21px; color: #FFFFFF; text-align: center;`, esc(label)))).join("")) +
-  el("a", `display: inline-flex; align-items: center; justify-content: center; margin-bottom: 34px; padding-top: 9px; padding-bottom: 9px; padding-left: 37px; padding-right: 37px; border-radius: 914px; border-width: 1px; border-style: solid; border-color: #0F9300; background-image: linear-gradient(-11deg, #0A6500 0%, #63DE55 100%); box-shadow: 0px 4px 22px 0px rgba(15,147,0,0.55); font-family: ${FIRA}; font-weight: 400; font-size: 16.5px; letter-spacing: -0.9px; color: #FFFFFF; text-decoration-line: none;`, "Request a Demo", ` href="#contact"`) +
+  el("a", `display: inline-flex; align-items: center; justify-content: center; margin-bottom: 34px; padding-top: 9px; padding-bottom: 9px; padding-left: 37px; padding-right: 37px; border-radius: 914px; border-width: 1px; border-style: solid; border-color: #0F9300; background-image: linear-gradient(-11deg, #0A6500 0%, #63DE55 100%); box-shadow: 0px 4px 22px 0px rgba(15,147,0,0.55); font-family: ${FIRA}; font-weight: 400; font-size: 16.5px; letter-spacing: -0.9px; color: #FFFFFF; text-decoration-line: none;`, "Request a Demo", ` href="${ROUTES.contact}"`) +
   el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 34px; color: #FFFFFF; text-align: center;`,
     "Trusted by CTOs for secure, scalable, and fully integrated operational solutions."), ` id="what-we-do"`);
 
@@ -143,7 +198,7 @@ const fcol = (heading, links) =>
   el("div", `display: flex; flex-direction: column; gap: 24px;`,
     el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 24px; color: #333333;`, esc(heading)) +
     el("div", `display: flex; flex-direction: column; gap: 10px;`,
-      links.map((l) => el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: #333333; text-decoration-line: none; padding-top: 6px; padding-bottom: 6px;`, esc(l), ` href="#solutions"`)).join("")));
+      links.map(([label, href]) => el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: #333333; text-decoration-line: none; padding-top: 6px; padding-bottom: 6px;`, esc(label), ` href="${href}"`)).join("")));
 
 export const footer = el("footer",
   `display: flex; flex-direction: column; gap: 48px; padding-top: 50px; padding-bottom: 50px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #FFFFFF; border-top-width: 1px; border-top-style: solid; border-top-color: #E6E9EE;`,
@@ -152,15 +207,17 @@ export const footer = el("footer",
     el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; color: #464A4B;`,
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text ever since the 1500s.")) +
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; align-items: start;`,
-    el("div", `display: flex; flex-direction: column; gap: 24px;`, img(A.logo, "Botnizer", `height: 57px; width: auto; align-self: flex-start;`)) +
-    fcol("Experience", ["Drive-Thru"]) +
-    fcol("Products", ["Digital Signage","Self-Ordering Kiosk","NFC Google Review Cards","Digital Menu Board","Drive-Thru Audio System"]) +
-    fcol("Company", ["About","Solutions","Case Study"]) +
+    el("div", `display: flex; flex-direction: column; gap: 24px;`,
+      el("a", `align-self: flex-start; text-decoration-line: none;`,
+        img(A.logo, "Botnizer", `height: 57px; width: auto;`), ` href="${ROUTES.home}"`)) +
+    fcol("Experience", EXPERIENCE_LINKS) +
+    fcol("Products", PRODUCT_LINKS) +
+    fcol("Company", COMPANY_LINKS) +
     el("div", `display: flex; flex-direction: column; gap: 24px; padding: 20px; background-color: #F3F3F3;`,
       el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 24px; color: #333333;`, "Let&#39;s Get Started!") +
       el("div", `display: flex; flex-direction: column; gap: 10px;`,
         el("p", `margin-top: 0px; margin-bottom: 0px; max-width: 260px; font-family: ${FIRA}; font-weight: 300; font-size: 22px; color: #333333;`, "We&#39;re here to listen and assist.") +
-        el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: #333333; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px;`, "Contact us today", ` href="#contact"`)))) +
+        el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: #333333; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px;`, "Contact us today", ` href="${ROUTES.contact}"`)))) +
   el("div", `display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding-top: 24px; border-top-width: 1px; border-top-style: solid; border-top-color: #E6E9EE;`,
     el("span", `font-family: ${FIRA}; font-weight: 300; font-size: 16px; color: #464A4B;`, "©2025 Botnizer, All rights reserved") +
     el("a", `margin-left: auto; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #0033C3; text-decoration-line: none;`, "Back to top ↑", ` href="#top"`)), ` id="contact"`);

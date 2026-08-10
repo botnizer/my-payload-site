@@ -140,7 +140,7 @@ const integration = el("section",
           chip(A.optMenu, esc(t)) +
           el("h3", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 600; font-size: 20px; line-height: 26px; color: #262626;`, t)) +
         el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 17px; line-height: 26px; color: #464A4B;`, esc(b)))).join("")) +
-  el("a", PILL, "View All Integrations →", ` href="#contact"`));
+  el("a", PILL, "View All Integrations →", ` href="/solutions"`));
 
 // ---- 10. Drive-Thru Success Stories (4:36777) ----
 const storyStats = [["22%","Average AOV Increase"],["8.2mo","Average Payback Period"],["65%","Faster Menu Updates"],["327%","5 Year ROI"]];
@@ -166,7 +166,7 @@ const stories = el("section",
           el("div", `display: flex; flex-direction: column; gap: 8px; padding-left: 16px; border-left-width: 3px; border-left-style: solid; border-left-color: #0F9300;`,
             el("span", `font-family: ${FIRA}; font-weight: 400; font-size: clamp(30px, 3.2vw, 42px); color: #333333;`, esc(n)) +
             el("span", `font-family: ${FIRA}; font-weight: 300; font-size: 17px; line-height: 24px; color: #464A4B;`, esc(l)))).join("")) +
-      el("a", PILL + ` align-self: flex-start;`, "Read Full Case Study →", ` href="#contact"`)) +
+      el("a", PILL + ` align-self: flex-start;`, "Read Full Case Study →", ` href="/case-studies/detail"`)) +
     el("div", `position: relative; display: flex; flex-direction: column; gap: 16px;`,
       img(A.story, "Illuminated drive-thru sign at a quick service restaurant at night",
           `width: 100%; height: auto; max-height: 640px; object-fit: cover; border-radius: 20px;`) +

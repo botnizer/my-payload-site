@@ -43,7 +43,7 @@ const resultCards = [
    "“Botnizer’s drive-thru timer and audio system reduced our average service time from 3:45 to 2:35 minutes.”"],
 ];
 const viewCase = el("a", `display: inline-flex; align-items: center; gap: 10px; font-family: ${FIRA}; font-weight: 500; font-size: 16px; color: #2859EC; text-decoration-line: none;`,
-  "View Case Study" + img(A.arrow, "", `width: 14px; height: 10.857px; flex-shrink: 0;`), ` href="#cases"`);
+  "View Case Study" + img(A.arrow, "", `width: 14px; height: 10.857px; flex-shrink: 0;`), ` href="/case-studies/detail"`);
 
 const results = el("section",
   `display: flex; flex-direction: column; align-items: center; padding-top: clamp(56px, 7vw, 100px); padding-bottom: clamp(40px, 5vw, 70px); ${PAD} background-color: #FFFFFF;`,
@@ -64,7 +64,7 @@ const results = el("section",
               el("span", `font-family: ${FIRA}; font-weight: 300; font-size: 18px; color: #333333; white-space: nowrap;`, esc(l)))).join("")) +
           el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 1.4; color: #333333;`, esc(quote))) +
         viewCase)).join("")) +
-  el("a", PILL, "View All Case Studies →", ` href="#cases"`));
+  el("a", PILL, "View All Case Studies →", ` href="/case-studies"`));
 
 // ---- 3. Solution / offerings heading (4:36107) + reused offering grid (4:36110 == home 65:49357) ----
 const offeringsIntro = el("section",

@@ -119,7 +119,7 @@ const trialCta = el("section",
         "Ready to Transform Your Restaurant Technology Stack?") +
       el("p", `margin-top: 0px; margin-bottom: 28px; font-family: ${POP}; font-weight: 300; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.62; color: #FFFFFF;`,
         "Schedule a personalized 30-minute consultation with our solutions team. See how the Botnizer platform integrates with your ecosystem to drive revenue and operational efficiency.") +
-      el("a", PILL + ` align-self: flex-start;`, "Request a Demo", ` href="#get-in-touch"`)) +
+      el("a", PILL + ` align-self: flex-start;`, "Request a Demo", ` href="/contact"`)) +
     img(A.cta, "Botnizer analytics dashboard on desktop and mobile",
         `width: 100%; height: auto; align-self: center; justify-self: end;`)));
 

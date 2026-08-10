@@ -380,12 +380,57 @@ asset URLs were extracted from the saved payloads with a script.
 - The "Share" control in the detail hero is a static link — no share
   behaviour is specified in the design.
 
+## Navigation
+
+`build-figma-home.mjs` exports a `ROUTES` map plus `EXPERIENCE_LINKS`,
+`PRODUCT_LINKS` and `COMPANY_LINKS`. The nav dropdown and the footer columns
+both read from those arrays, so the two cannot drift apart. Change a
+destination in one place.
+
+Self-Ordering Kiosk, NFC Google Review Cards and Digital Menu Board have no
+page of their own — they exist only as cards in the Solutions offering grid,
+so they deep-link to `/solutions#solutions` and `/digital-signage`.
+
+### The "What we do" dropdown
+
+**Webstudio's `css` template supports self-states but not descendant
+combinators.** `&:hover { … }` on an element persists as a real `:hover` state
+declaration; `.panel { … }` and `&:hover .panel { … }` are silently dropped —
+`insert-fragment` still returns `ok: true`, and the rules simply never appear
+in `get-styles`. Verified by probe: of four rules submitted, only the two
+self-scoped ones came back.
+
+So the panel cannot be toggled by styling a child from the parent. Instead the
+trigger clips itself and un-clips on interaction:
+
+```
+trigger: position: relative; overflow: hidden;
+         &:hover { overflow: visible; }
+         &:focus-within { overflow: visible; }
+panel:   position: absolute; top: 100%; left: 0;
+```
+
+`:hover`, `:focus`, and `:focus-within` all persist, so the panel opens for
+keyboard users as well as pointer. Confirm with
+`get-styles '{"pagePath":"/solutions","property":"overflowX","verbose":true}'`
+— the trigger should show a base `hidden` plus `:hover` and `:focus-within`
+`visible`.
+
+Caveat: the panel stays in the DOM and in the accessibility tree when closed
+(it is clipped, not removed), and at 1040px wide it needs a mobile treatment —
+both belong to the mobile pass.
+
 ## Shared fragments
 
 | Module | Exports | Used by |
 | --- | --- | --- |
 | `fig-gen.mjs` (copy of `build-figma-home.mjs`) | `nav`, `footer`, `offering`, `caseStudies`, `technical`, `hero`, `trust`, `vision`, `elevate`, `results` | every Figma page |
 | `fig-shared.mjs` | JSX helpers, type/colour constants, `chip`, `iconCard`, `ctaForm`, `roiCalculator(heading, intro)` | Solutions, Drive-Thru, Digital Signage |
+
+`build-figma-new-home.mjs` composes `/new-home` purely from `fig-gen.mjs`
+exports. It exists so the page can be rebuilt whenever the shared nav or
+footer changes — previously it was assembled ad hoc on the command line and
+had no generator in the repo.
 
 `fig-shared.mjs` was extracted after the Drive-Thru build; Solutions and
 Drive-Thru were refactored onto it and verified to emit byte-identical
