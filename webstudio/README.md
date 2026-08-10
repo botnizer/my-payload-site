@@ -405,10 +405,24 @@ trigger clips itself and un-clips on interaction:
 
 ```
 trigger: position: relative; overflow: hidden;
+         padding-bottom: 26px; margin-bottom: -26px;
          &:hover { overflow: visible; }
          &:focus-within { overflow: visible; }
-panel:   position: absolute; top: 100%; left: 0;
+panel:   position: absolute; top: 100%; left: 0;   /* no margin-top */
 ```
+
+**The trigger's padding-bottom is load-bearing, and so is the panel having no
+`margin-top`.** Any gap between the two is dead space belonging to neither
+element: moving the pointer down from the link leaves the trigger, `:hover`
+goes false, `overflow` snaps back to `hidden`, and the panel closes before it
+can be reached — it flashes open and shut. The padding stretches the hover
+target to the header's bottom edge (25px header padding + 1px border) and the
+negative margin keeps that padding from growing the nav row, so `top: 100%`
+(which resolves against the trigger's *padding* box) lands the panel exactly
+at the header edge with a continuous pointer path.
+
+This class of bug does not show up in `get-styles` — every declaration stores
+correctly. It is only visible by hovering the real page.
 
 `:hover`, `:focus`, and `:focus-within` all persist, so the panel opens for
 keyboard users as well as pointer. Confirm with

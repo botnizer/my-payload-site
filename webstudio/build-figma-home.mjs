@@ -54,7 +54,11 @@ const panelCol = (heading, links) =>
 // which reveals the absolutely-positioned panel. :focus-within makes it reachable
 // by keyboard as well as pointer.
 const megaPanel = el("div",
-  `position: absolute; top: 100%; left: 0px; z-index: 60; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; width: min(1040px, calc(100vw - 140px)); margin-top: 14px; padding: 30px; border-radius: 10px; background-color: #FFFFFF; box-shadow: 0px 18px 50px 0px rgba(0,0,0,0.22);`,
+  // No margin-top: any gap between the trigger and the panel is dead space that
+  // drops :hover on the way down, which closes the panel before it can be reached.
+  // top:100% resolves against the trigger's padding box, so the padding below
+  // carries the pointer continuously from the link into the panel.
+  `position: absolute; top: 100%; left: 0px; z-index: 60; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; width: min(1040px, calc(100vw - 140px)); padding: 30px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; background-color: #FFFFFF; box-shadow: 0px 18px 50px 0px rgba(0,0,0,0.22);`,
   panelCol("Experience", EXPERIENCE_LINKS) +
   panelCol("Products", PRODUCT_LINKS) +
   el("div", `display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 10px; background-color: #F3F3F3;`,
@@ -64,7 +68,10 @@ const megaPanel = el("div",
       "Contact us today", ` href="${ROUTES.contact}"`)));
 
 const whatWeDo = el("div",
-  `position: relative; display: flex; align-items: center; overflow: hidden; &:hover { overflow: visible; } &:focus-within { overflow: visible; }`,
+  // padding-bottom stretches the hover target down to the header's bottom edge
+  // (25px header padding + 1px border), so there is no gap to fall through;
+  // the negative margin keeps that padding from growing the nav row.
+  `position: relative; display: flex; align-items: center; padding-bottom: 26px; margin-bottom: -26px; overflow: hidden; &:hover { overflow: visible; } &:focus-within { overflow: visible; }`,
   el("a", navLinkStyle + ` display: inline-flex; align-items: center; gap: 8px;`,
     "What we do" + img(A.chevron, "", `width: 12px; height: auto; flex-shrink: 0;`),
     ` href="${ROUTES.solutions}"`) +
