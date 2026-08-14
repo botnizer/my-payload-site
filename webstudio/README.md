@@ -393,46 +393,68 @@ so they deep-link to `/solutions#solutions` and `/digital-signage`.
 
 ### The "What we do" dropdown
 
+The menu sits beside the logo: the header is `justify-content: flex-start`
+with a `clamp(20px, 4vw, 56px)` gap, not `space-between` (which pushed the
+whole menu to the far right of the bar).
+
 **Webstudio's `css` template supports self-states but not descendant
-combinators.** `&:hover { … }` on an element persists as a real `:hover` state
-declaration; `.panel { … }` and `&:hover .panel { … }` are silently dropped —
-`insert-fragment` still returns `ok: true`, and the rules simply never appear
-in `get-styles`. Verified by probe: of four rules submitted, only the two
-self-scoped ones came back.
+combinators.** `&:hover { … }` on an element persists as a real `:hover`
+state; `.panel { … }` and `&:hover .panel { … }` are silently dropped —
+`insert-fragment` still returns `ok: true` and the rules never appear in
+`get-styles`. So a parent cannot style a child on hover.
 
-So the panel cannot be toggled by styling a child from the parent. Instead the
-trigger clips itself and un-clips on interaction:
+What it *does* keep, all verified by probe:
+
+| Written | Stored as |
+| --- | --- |
+| `--menu-open: 0;` plus a `:hover` value | custom property, per state |
+| `opacity: var(--menu-open)` | `{"type":"var"}` |
+| `transform: translateY(var(--menu-y))` | var resolves *inside* the function |
+| `visibility: var(--menu-vis)` | var on a keyword property |
+| `transition-property/-duration/-delay` | layered lists |
+
+That combination is what makes the reveal animatable. The trigger's `:hover`
+and `:focus-within` flip a set of variables; the panel reads them and
+transitions:
 
 ```
-trigger: position: relative; overflow: hidden;
-         padding-bottom: 26px; margin-bottom: -26px;
-         &:hover { overflow: visible; }
-         &:focus-within { overflow: visible; }
-panel:   position: absolute; top: 100%; left: 0;   /* no margin-top */
+trigger: position: relative; padding-bottom: 26px; margin-bottom: -26px;
+         --menu-open: 0; --menu-y: -10px; --menu-vis: hidden;
+         --menu-delay: 220ms; --menu-rot: 0deg;
+         &:hover, &:focus-within { --menu-open: 1; --menu-y: 0px;
+                   --menu-vis: visible; --menu-delay: 0ms; --menu-rot: 180deg; }
+panel:   top: 100%;  visibility: var(--menu-vis);
+         opacity: var(--menu-open); transform: translateY(var(--menu-y));
+         transition-delay: 0ms, 0ms, var(--menu-delay);
 ```
 
-**The trigger's padding-bottom is load-bearing, and so is the panel having no
-`margin-top`.** Any gap between the two is dead space belonging to neither
-element: moving the pointer down from the link leaves the trigger, `:hover`
-goes false, `overflow` snaps back to `hidden`, and the panel closes before it
-can be reached — it flashes open and shut. The padding stretches the hover
-target to the header's bottom edge (25px header padding + 1px border) and the
-negative margin keeps that padding from growing the nav row, so `top: 100%`
-(which resolves against the trigger's *padding* box) lands the panel exactly
-at the header edge with a continuous pointer path.
+Three things are load-bearing:
 
-This class of bug does not show up in `get-styles` — every declaration stores
-correctly. It is only visible by hovering the real page.
+1. **The trigger keeps its own `visibility`.** Putting `visibility: hidden` on
+   the trigger would hide the panel by inheritance, but it would also make the
+   trigger's padding non-hit-testable — reintroducing the gap bug below. Only
+   the panel's visibility is driven, via the variable.
+2. **`--menu-delay` is a variable, not a constant.** It holds `visibility` on
+   for the length of the fade when closing and drops to `0ms` when opening, so
+   the close animates instead of snapping.
+3. **The trigger's `padding-bottom` and the panel having no `margin-top`.** Any
+   gap between them is dead space belonging to neither element: the pointer
+   leaves the trigger on the way down, `:hover` goes false and the panel closes
+   before it can be reached. The padding stretches the hover target to the
+   header's bottom edge (25px padding + 1px border), the negative margin stops
+   that growing the nav row, and `top: 100%` resolves against the trigger's
+   *padding* box so the panel lands flush.
 
-`:hover`, `:focus`, and `:focus-within` all persist, so the panel opens for
-keyboard users as well as pointer. Confirm with
-`get-styles '{"pagePath":"/solutions","property":"overflowX","verbose":true}'`
-— the trigger should show a base `hidden` plus `:hover` and `:focus-within`
-`visible`.
+Nav links also transition `color` to `#13C000` on hover, and the chevron
+rotates 180°.
 
-Caveat: the panel stays in the DOM and in the accessibility tree when closed
-(it is clipped, not removed), and at 1040px wide it needs a mobile treatment —
-both belong to the mobile pass.
+Caveat: the panel stays in the DOM when closed (`visibility: hidden`, not
+removed), and at 1040px wide it needs a mobile treatment — hover is not
+available on touch. Both belong to the mobile pass.
+
+Note that **none of this can be verified with `get-styles`.** Declarations
+store correctly even when the geometry or hit-testing is wrong. Check it by
+hovering the published page.
 
 ## Shared fragments
 

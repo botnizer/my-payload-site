@@ -37,7 +37,7 @@ export const COMPANY_LINKS = [
 ];
 
 const navLinks = [[ROUTES.solutions,"Solutions"],[ROUTES.about,"About"],[ROUTES.cases,"Case Study"],[ROUTES.contact,"Contact"]];
-const navLinkStyle = `font-family: ${FIRA}; font-weight: 300; font-size: clamp(15px, 1.4vw, 20px); color: #FFFFFF; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px; white-space: nowrap;`;
+const navLinkStyle = `font-family: ${FIRA}; font-weight: 300; font-size: clamp(15px, 1.4vw, 20px); color: #FFFFFF; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px; white-space: nowrap; transition-property: color; transition-duration: 160ms; transition-timing-function: ease; &:hover { color: #13C000; }`;
 
 // Panel column. Mirrors the footer's fcol so the two stay visually consistent.
 const panelCol = (heading, links) =>
@@ -50,15 +50,21 @@ const panelCol = (heading, links) =>
 
 // Webstudio's css template supports self-states (:hover / :focus-within) but not
 // descendant combinators, so the panel cannot be toggled with `&:hover .panel`.
-// Instead the trigger clips its own overflow and un-clips it on hover/focus,
-// which reveals the absolutely-positioned panel. :focus-within makes it reachable
-// by keyboard as well as pointer.
+// It does keep custom properties, including per-state values, and vars resolve
+// inside functions — so the trigger's :hover flips a set of variables that the
+// panel reads. That is what makes the reveal animatable rather than a hard
+// on/off. :focus-within mirrors :hover so the menu opens for keyboard users too.
 const megaPanel = el("div",
-  // No margin-top: any gap between the trigger and the panel is dead space that
-  // drops :hover on the way down, which closes the panel before it can be reached.
-  // top:100% resolves against the trigger's padding box, so the padding below
-  // carries the pointer continuously from the link into the panel.
-  `position: absolute; top: 100%; left: 0px; z-index: 60; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; width: min(1040px, calc(100vw - 140px)); padding: 30px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; background-color: #FFFFFF; box-shadow: 0px 18px 50px 0px rgba(0,0,0,0.22);`,
+  // Open/close is driven entirely by custom properties set on the trigger and
+  // inherited down here, because Webstudio has no descendant selectors. The
+  // trigger keeps its own visibility (and so stays hit-testable, including the
+  // padding that bridges the pointer down from the link); only the panel reacts.
+  // transitioning visibility alongside opacity keeps the close animated instead
+  // of snapping.
+  //
+  // No margin-top: any gap between trigger and panel is dead space that drops
+  // :hover on the way down. top:100% resolves against the trigger's padding box.
+  `position: absolute; top: 100%; left: 0px; z-index: 60; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; width: min(1040px, calc(100vw - 140px)); padding: 30px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; background-color: #FFFFFF; box-shadow: 0px 18px 50px 0px rgba(0,0,0,0.22); visibility: var(--menu-vis); opacity: var(--menu-open); transform: translateY(var(--menu-y)); transition-property: opacity, transform, visibility; transition-duration: 220ms, 220ms, 0ms; transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: 0ms, 0ms, var(--menu-delay);`,
   panelCol("Experience", EXPERIENCE_LINKS) +
   panelCol("Products", PRODUCT_LINKS) +
   el("div", `display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 10px; background-color: #F3F3F3;`,
@@ -71,14 +77,19 @@ const whatWeDo = el("div",
   // padding-bottom stretches the hover target down to the header's bottom edge
   // (25px header padding + 1px border), so there is no gap to fall through;
   // the negative margin keeps that padding from growing the nav row.
-  `position: relative; display: flex; align-items: center; padding-bottom: 26px; margin-bottom: -26px; overflow: hidden; &:hover { overflow: visible; } &:focus-within { overflow: visible; }`,
+  //
+  // --menu-delay holds visibility on for the length of the fade when closing,
+  // and drops to 0 when opening so the panel appears at once and then eases in.
+  `position: relative; display: flex; align-items: center; padding-bottom: 26px; margin-bottom: -26px; --menu-open: 0; --menu-y: -10px; --menu-vis: hidden; --menu-delay: 220ms; --menu-rot: 0deg; &:hover { --menu-open: 1; --menu-y: 0px; --menu-vis: visible; --menu-delay: 0ms; --menu-rot: 180deg; } &:focus-within { --menu-open: 1; --menu-y: 0px; --menu-vis: visible; --menu-delay: 0ms; --menu-rot: 180deg; }`,
   el("a", navLinkStyle + ` display: inline-flex; align-items: center; gap: 8px;`,
-    "What we do" + img(A.chevron, "", `width: 12px; height: auto; flex-shrink: 0;`),
+    "What we do" + img(A.chevron, "", `width: 12px; height: auto; flex-shrink: 0; transform: rotate(var(--menu-rot)); transition-property: transform; transition-duration: 220ms; transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);`),
     ` href="${ROUTES.solutions}"`) +
   megaPanel);
 
+// justify-content is flex-start, not space-between: the menu sits beside the
+// logo rather than being pushed to the far right of the bar.
 export const nav = el("header",
-  `position: sticky; top: 0px; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 25px; padding-bottom: 25px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: rgba(51,51,51,0.92); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #13C000;`,
+  `position: sticky; top: 0px; z-index: 50; display: flex; align-items: center; justify-content: flex-start; gap: clamp(20px, 4vw, 56px); padding-top: 25px; padding-bottom: 25px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: rgba(51,51,51,0.92); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #13C000;`,
   el("a", `display: flex; align-items: center; gap: 5px; text-decoration-line: none; flex-shrink: 0;`,
      img(A.logo, "Botnizer", `height: 34px; width: auto;`), ` href="${ROUTES.home}"`) +
   el("nav", `display: flex; flex-wrap: wrap; align-items: center; gap: 30px;`,
