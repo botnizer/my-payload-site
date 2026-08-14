@@ -191,11 +191,14 @@ const heroMedia = HERO_VIDEO
 export const hero = el("section",
   `position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 100vh; overflow: hidden; background-color: #1A1A1A;`,
   heroMedia +
-  // Scrim: darkest at the top (behind the translucent nav) and at the bottom
+  // Scrim: darkest at the top (behind the transparent nav) and at the bottom
   // (behind the copy), lightest through the middle so the footage still reads.
+  //
+  // There is deliberately no white fade at the bottom. A gradient to #FFFFFF
+  // was meant to blend into the white section below, but over dark footage it
+  // reads as a milky wash across the video rather than a transition. The hard
+  // edge from video to the next section is cleaner.
   el("div", `position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 1; background-image: linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.18) 32%, rgba(0,0,0,0.30) 62%, rgba(0,0,0,0.78) 100%);`) +
-  // Bottom fade into the white section that follows.
-  el("div", `position: absolute; bottom: 0px; left: 0px; width: 100%; height: 160px; z-index: 1; background-image: linear-gradient(180deg, rgba(255,255,255,0) 0%, #FFFFFF 100%);`) +
   el("div", `position: relative; z-index: 2; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: end; gap: clamp(28px, 3vw, 48px); margin-top: auto; margin-left: auto; margin-right: auto; margin-bottom: clamp(90px, 12vh, 150px); width: calc(100% - clamp(40px, 9.8vw, 140px)); max-width: 1300px; padding-top: clamp(28px, 3.2vw, 44px); padding-bottom: clamp(28px, 3.2vw, 44px); padding-left: clamp(24px, 3.5vw, 48px); padding-right: clamp(24px, 3.5vw, 48px); border-radius: 20px; background-color: rgba(12,12,12,0.34); backdrop-filter: blur(14px); border-width: 1px; border-style: solid; border-color: rgba(255,255,255,0.16); box-shadow: 0px 24px 70px 0px rgba(0,0,0,0.35);`,
     el("div", `display: flex; flex-direction: column;`,
       el("h1", `margin-top: 0px; margin-bottom: 10px; font-family: ${FIRA}; font-weight: 700; font-size: clamp(32px, 4.6vw, 68px); line-height: 1.02; letter-spacing: -1.5px; color: #FFFFFF; text-shadow: 0px 2px 18px rgba(0,0,0,0.45);`, "Restaurant Technology") +
