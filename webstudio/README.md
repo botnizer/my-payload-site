@@ -388,15 +388,26 @@ background of its own, and the page root is transparent — so the layer shows
 through behind the translucent header and the hero, and the opaque sections
 below cover it as the page scrolls. No layout moves when the source changes.
 
-To turn on the video, set `HERO_VIDEO` at the top of `build-figma-home.mjs` to
-an `https://` URL and rebuild every page. When it is `null` the same slot
-renders the still hero image instead, so the page is never broken.
+`HERO_VIDEO` at the top of `build-figma-home.mjs` holds the asset id
+(`rVCSVikBmzJjovMSU9AY4`, the 2.8 MB Acrelec drive-thru teaser). Set it to
+`null` and the same slot renders the still hero image instead, so the page is
+never in a broken state.
 
-**Size matters more than usual here.** This instance rejected a 10.1 MB mp4
-with `502 Bad Gateway`; ~2 MB is the practical ceiling for `upload-assets`. A
-full-screen background loop should be muted, a few seconds long, 720p, and
-heavily compressed — or hosted externally and referenced by URL, which avoids
-the limit entirely.
+**Write the video's boolean props as `{true}`, not `"true"`, and use React's
+camelCase names.** `autoplay="true"` stores as `type: "string"`; `muted` then
+never reaches the DOM *property*, and browsers block autoplay on a video that
+is not muted — so the background silently stays on the poster frame. Written
+as `autoPlay={true} muted={true} loop={true} playsInline={true}` they store as
+`type: "boolean"`. `src`/`poster` take `new AssetValue("<id>")` on a plain
+`ws:element` and store as `type: "asset"`, same as on `$.Image`.
+
+**Upload ceiling.** A 10.1 MB mp4 was rejected with `502 Bad Gateway`; 2.0 MB
+and 2.9 MB both uploaded fine, so the limit sits somewhere between 3 and 10 MB.
+Anything larger should be hosted externally and referenced by URL.
+
+Note the sandbox's only ffmpeg is Playwright's build, compiled with
+`--disable-everything` and just vp8/webm/png — it cannot even demux an mp4, so
+video cannot be transcoded here without installing a full ffmpeg first.
 
 The header is `rgba(0,0,0,0.55)` with a backdrop blur rather than the old
 opaque grey, so the video reads through it. That value is deliberately dark
