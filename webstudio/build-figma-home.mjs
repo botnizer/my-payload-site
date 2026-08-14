@@ -92,10 +92,18 @@ const whatWeDo = el("div",
 // justify-content is flex-start, not space-between: the menu sits beside the
 // logo rather than being pushed to the far right of the bar.
 export const nav = el("header",
-  // Translucent black so the home page's background video reads through it.
-  // 0.55 is dark enough to keep the white links legible over the white sections
-  // on the other pages too, which matters because this header is shared.
-  `position: sticky; top: 0px; z-index: 50; display: flex; align-items: center; justify-content: flex-start; gap: clamp(20px, 4vw, 56px); padding-top: 25px; padding-bottom: 25px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: rgba(0,0,0,0.55); backdrop-filter: blur(12px); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #13C000;`,
+  // Black gloss, not grey haze.
+  //
+  // A flat rgba(0,0,0,0.55) sheet over bright footage averages out to grey: it
+  // veils the video instead of tinting it. Three things fix that, and all three
+  // matter — the gradient gives the glass depth (deepest at the top edge where
+  // it meets the viewport, easing off toward the rule), `saturate` lets the
+  // footage's colour survive the tint rather than washing to neutral, and the
+  // inset top highlight plus drop shadow give it a lit edge and lift it off the
+  // page. Net effect is darker than before, not lighter, which also improves
+  // contrast for the white links over the white sections on the other pages —
+  // this header is shared, so it has to hold up on both.
+  `position: sticky; top: 0px; z-index: 50; display: flex; align-items: center; justify-content: flex-start; gap: clamp(20px, 4vw, 56px); padding-top: 25px; padding-bottom: 25px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: rgba(0,0,0,0.58); background-image: linear-gradient(180deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.66) 55%, rgba(0,0,0,0.54) 100%); backdrop-filter: blur(20px) saturate(170%); box-shadow: inset 0px 1px 0px 0px rgba(255,255,255,0.12), 0px 10px 30px 0px rgba(0,0,0,0.28); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #13C000;`,
   el("a", `display: flex; align-items: center; gap: 5px; text-decoration-line: none; flex-shrink: 0;`,
      img(A.logo, "Botnizer", `height: 34px; width: auto;`), ` href="${ROUTES.home}"`) +
   el("nav", `display: flex; flex-wrap: wrap; align-items: center; gap: 30px;`,

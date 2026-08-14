@@ -421,11 +421,34 @@ Note the sandbox's only ffmpeg is Playwright's build, compiled with
 `--disable-everything` and just vp8/webm/png — it cannot even demux an mp4, so
 video cannot be transcoded here without installing a full ffmpeg first.
 
-The header is `rgba(0,0,0,0.55)` with a backdrop blur so the video reads
-through it. That value is deliberately dark enough to keep the white nav links
-legible over the *white* sections on the other pages, since the header is
-shared. Anything much lighter would break them, and there is no
-scroll-triggered variant without a Webstudio interaction.
+### The header reads as black glass, not grey
+
+A flat `rgba(0,0,0,0.55)` sheet over bright footage averages out to grey — it
+veils the video rather than tinting it. Three things together fix that, and all
+three are load-bearing:
+
+| | |
+| --- | --- |
+| `background-image: linear-gradient(180deg, rgba(0,0,0,0.88) → 0.66 → 0.54)` | depth: deepest at the viewport edge, easing off toward the green rule |
+| `backdrop-filter: blur(20px) saturate(170%)` | `saturate` is what keeps the footage's colour alive through the tint; blur alone just washes it neutral |
+| `box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 30px rgba(0,0,0,0.28)` | a lit top edge and lift off the page |
+
+The net result is **darker** than the flat version, not lighter. That matters
+because the header is shared: the same bar sits over white sections on the
+other seven pages, where a more transparent treatment would drop the white
+links to roughly 2.6:1 contrast. Verify all four properties survive a
+re-insert — gradients, filter functions and multi-layer shadows are each
+things the style pipeline could drop:
+
+```
+get-styles '{"instanceIds":["<header>"],"verbose":true}'
+# expect backgroundColor + backgroundImage + backdropFilter (blur AND saturate)
+# + boxShadow with 2 layers, the first inset
+```
+
+A genuinely transparent nav at the top that solidifies on scroll needs either a
+Webstudio interaction or a CSS scroll-driven animation, and the latter needs
+`@keyframes`, which cannot be declared from the `css` template.
 
 ## Navigation
 
