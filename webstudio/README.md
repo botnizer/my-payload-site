@@ -446,9 +446,33 @@ get-styles '{"instanceIds":["<header>"],"verbose":true}'
 # + boxShadow with 2 layers, the first inset
 ```
 
-A genuinely transparent nav at the top that solidifies on scroll needs either a
-Webstudio interaction or a CSS scroll-driven animation, and the latter needs
-`@keyframes`, which cannot be declared from the `css` template.
+### Scroll-aware nav (home page only)
+
+On the home page the bar starts fully transparent over the hero video and
+fades into black glass once the page scrolls past 80px.
+
+The `css` template cannot express this — no descendant selectors, no
+`@keyframes`, and the state depends on scroll position rather than any CSS
+state of the element itself. The rules go in through **`$.HtmlEmbed`**, which
+takes a raw `code` string, so arbitrary CSS and JS are available when the
+style pipeline is not enough. That is the general escape hatch; reach for it
+only when the template genuinely cannot do the job.
+
+Three details are load-bearing:
+
+- **Two embeds, not one.** The `<style>` is server-rendered so the nav is
+  already transparent on first paint; the `<script>` sets `clientOnly={true}`,
+  which is what Webstudio requires for scripts that touch the DOM. Putting the
+  CSS in the client-only embed would flash the solid bar before hydration.
+- **Opt-in per page.** The header carries `data-nav="main"` everywhere, but
+  only the home page includes the embeds. The other pages open on white
+  sections, where a transparent bar would leave white links on white.
+- **Single quotes throughout the embed code**, so it survives being
+  JSON-encoded into the JSX `code` prop.
+
+The script toggles `data-scrolled="1"` on the header; the CSS transitions
+background, blur, shadow and the green rule between the two states, and is
+disabled under `prefers-reduced-motion`.
 
 ## Navigation
 

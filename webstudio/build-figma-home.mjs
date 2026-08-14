@@ -108,7 +108,48 @@ export const nav = el("header",
      img(A.logo, "Botnizer", `height: 34px; width: auto;`), ` href="${ROUTES.home}"`) +
   el("nav", `display: flex; flex-wrap: wrap; align-items: center; gap: 30px;`,
      whatWeDo +
-     navLinks.map(([h,t]) => el("a", navLinkStyle, esc(t), ` href="${h}"`)).join("")));
+     navLinks.map(([h,t]) => el("a", navLinkStyle, esc(t), ` href="${h}"`)).join("")),
+  // Hook for the scroll behaviour below. Harmless on the pages that do not
+  // opt in — it is only an attribute until some CSS targets it.
+  ` data-nav="main"`);
+
+// ---- Scroll-aware nav (home page only) ----
+//
+// The nav starts fully transparent over the hero video and fades into black
+// glass once the page scrolls. Webstudio's `css` template cannot express this:
+// it has no descendant selectors and no @keyframes, and the state depends on
+// scroll position rather than on any CSS state of the element itself. So the
+// rules go in via an HtmlEmbed, which renders raw HTML.
+//
+// This is opt-in per page for a reason. The bar is shared, and the other pages
+// open on white sections — a transparent nav there would leave white links on
+// white. Only the home page, whose hero is dark video, includes these.
+//
+// Two embeds, deliberately: the <style> is server-rendered so the nav is
+// already transparent on first paint, while the <script> is clientOnly because
+// that is what Webstudio requires for scripts that touch the DOM. Splitting
+// them avoids a flash of the solid bar before hydration.
+const NAV_SCROLL_CSS =
+  `<style>` +
+  `header[data-nav='main']{background-color:rgba(0,0,0,0)!important;background-image:none!important;` +
+  `backdrop-filter:none!important;box-shadow:none!important;border-bottom-color:rgba(19,192,0,0)!important;` +
+  `transition:background-color .3s ease,backdrop-filter .3s ease,box-shadow .3s ease,border-bottom-color .3s ease}` +
+  `header[data-nav='main'][data-scrolled='1']{background-color:rgba(0,0,0,0.72)!important;` +
+  `backdrop-filter:blur(20px) saturate(170%)!important;box-shadow:0 10px 30px rgba(0,0,0,.28)!important;` +
+  `border-bottom-color:rgba(19,192,0,1)!important}` +
+  `@media (prefers-reduced-motion:reduce){header[data-nav='main']{transition:none}}` +
+  `</style>`;
+
+// Single quotes throughout so the whole thing survives being JSON-encoded into
+// the JSX `code` prop. Threshold is 80px — roughly the bar's own height.
+const NAV_SCROLL_JS =
+  `<script>(function(){var n=document.querySelector('header[data-nav]');if(!n){return;}` +
+  `var s=function(){n.setAttribute('data-scrolled',window.scrollY>80?'1':'0');};` +
+  `s();window.addEventListener('scroll',s,{passive:true});})();</script>`;
+
+export const navScrollBehaviour =
+  `<$.HtmlEmbed code={${JSON.stringify(NAV_SCROLL_CSS)}} />` +
+  `<$.HtmlEmbed clientOnly={true} code={${JSON.stringify(NAV_SCROLL_JS)}} />`;
 
 // ---- Home hero background media ----
 //
