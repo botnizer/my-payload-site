@@ -380,6 +380,30 @@ asset URLs were extracted from the saved payloads with a script.
 - The "Share" control in the detail hero is a static link — no share
   behaviour is specified in the design.
 
+## Home page backdrop and background video
+
+The home page root carries a fixed, viewport-sized layer at `z-index: -1`
+(`homeBackdrop` in `fig-gen.mjs`), the hero is `min-height: 100vh` with no
+background of its own, and the page root is transparent — so the layer shows
+through behind the translucent header and the hero, and the opaque sections
+below cover it as the page scrolls. No layout moves when the source changes.
+
+To turn on the video, set `HERO_VIDEO` at the top of `build-figma-home.mjs` to
+an `https://` URL and rebuild every page. When it is `null` the same slot
+renders the still hero image instead, so the page is never broken.
+
+**Size matters more than usual here.** This instance rejected a 10.1 MB mp4
+with `502 Bad Gateway`; ~2 MB is the practical ceiling for `upload-assets`. A
+full-screen background loop should be muted, a few seconds long, 720p, and
+heavily compressed — or hosted externally and referenced by URL, which avoids
+the limit entirely.
+
+The header is `rgba(0,0,0,0.55)` with a backdrop blur rather than the old
+opaque grey, so the video reads through it. That value is deliberately dark
+enough to keep the white nav links legible over the *white* sections on the
+other pages, since the header is shared. Anything much lighter would break
+them, and there is no scroll-triggered variant without a Webstudio interaction.
+
 ## Navigation
 
 `build-figma-home.mjs` exports a `ROUTES` map plus `EXPERIENCE_LINKS`,
@@ -445,8 +469,13 @@ Three things are load-bearing:
    that growing the nav row, and `top: 100%` resolves against the trigger's
    *padding* box so the panel lands flush.
 
-Nav links also transition `color` to `#13C000` on hover, and the chevron
-rotates 180°.
+The panel spans the full page width: the trigger is deliberately *not*
+positioned, so the panel's containing block is the sticky header and
+`left/right: 0` resolve edge to edge, with an inner wrapper holding the page
+gutters and a 1300px max-width. Custom properties still reach it because they
+inherit through the DOM regardless of what the panel is positioned against.
+
+Nav links transition `color` to `#13C000` on hover. There is no chevron.
 
 Caveat: the panel stays in the DOM when closed (`visibility: hidden`, not
 removed), and at 1040px wide it needs a mobile treatment — hover is not
@@ -497,8 +526,8 @@ Each website page exists in two desktop revisions plus a mobile revision.
 
 | Webstudio page | Source node | State |
 | --- | --- | --- |
-| `/` | QSR design export (not Figma) | built, published |
-| `/new-home` | 65:49189 | built, published |
+| `/` | 65:49189 (Figma "New Home Page-updated") | built, published — **the site home page** |
+| `/old-home` | QSR design export (not Figma) | built, published — superseded, kept for reference |
 | `/contact` | 4:37561 (Set B) | built, published |
 | `/solutions` | 4:35995 (Set B) | built, published |
 | `/drive-thru` | 4:36578 (Set B) | built, published |

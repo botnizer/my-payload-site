@@ -56,51 +56,70 @@ const panelCol = (heading, links) =>
 // on/off. :focus-within mirrors :hover so the menu opens for keyboard users too.
 const megaPanel = el("div",
   // Open/close is driven entirely by custom properties set on the trigger and
-  // inherited down here, because Webstudio has no descendant selectors. The
-  // trigger keeps its own visibility (and so stays hit-testable, including the
-  // padding that bridges the pointer down from the link); only the panel reacts.
-  // transitioning visibility alongside opacity keeps the close animated instead
-  // of snapping.
+  // inherited down here. The trigger keeps its own visibility (and so stays
+  // hit-testable, including the padding that bridges the pointer down from the
+  // link); only the panel reacts. Transitioning visibility alongside opacity
+  // keeps the close animated instead of snapping.
   //
-  // No margin-top: any gap between trigger and panel is dead space that drops
-  // :hover on the way down. top:100% resolves against the trigger's padding box.
-  `position: absolute; top: 100%; left: 0px; z-index: 60; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; width: min(1040px, calc(100vw - 140px)); padding: 30px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; background-color: #FFFFFF; box-shadow: 0px 18px 50px 0px rgba(0,0,0,0.22); visibility: var(--menu-vis); opacity: var(--menu-open); transform: translateY(var(--menu-y)); transition-property: opacity, transform, visibility; transition-duration: 220ms, 220ms, 0ms; transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: 0ms, 0ms, var(--menu-delay);`,
-  panelCol("Experience", EXPERIENCE_LINKS) +
-  panelCol("Products", PRODUCT_LINKS) +
-  el("div", `display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 10px; background-color: #F3F3F3;`,
-    el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 20px; color: #333333;`, "Let&#39;s Get Started!") +
-    el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 17px; line-height: 25px; color: #333333;`, "We&#39;re here to listen and assist.") +
-    el("a", `align-self: flex-start; display: inline-flex; padding-top: 10px; padding-bottom: 10px; padding-left: 22px; padding-right: 22px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #FFFFFF; text-decoration-line: none;`,
-      "Contact us today", ` href="${ROUTES.contact}"`)));
+  // Spans the full page width. The trigger is deliberately NOT positioned, so the
+  // nearest positioned ancestor is the sticky header — left/right 0 then resolve
+  // against the header's padding box, i.e. edge to edge, and top:100% lands flush
+  // under it. Custom properties still reach here because they inherit through the
+  // DOM regardless of what the panel is positioned against.
+  `position: absolute; top: 100%; left: 0px; right: 0px; z-index: 60; padding-top: 34px; padding-bottom: 34px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #FFFFFF; box-shadow: 0px 18px 50px 0px rgba(0,0,0,0.22); visibility: var(--menu-vis); opacity: var(--menu-open); transform: translateY(var(--menu-y)); transition-property: opacity, transform, visibility; transition-duration: 220ms, 220ms, 0ms; transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: 0ms, 0ms, var(--menu-delay);`,
+  el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; width: 100%; max-width: 1300px; margin-left: auto; margin-right: auto;`,
+    panelCol("Experience", EXPERIENCE_LINKS) +
+    panelCol("Products", PRODUCT_LINKS) +
+    el("div", `display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 10px; background-color: #F3F3F3;`,
+      el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 20px; color: #333333;`, "Let&#39;s Get Started!") +
+      el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 17px; line-height: 25px; color: #333333;`, "We&#39;re here to listen and assist.") +
+      el("a", `align-self: flex-start; display: inline-flex; padding-top: 10px; padding-bottom: 10px; padding-left: 22px; padding-right: 22px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #FFFFFF; text-decoration-line: none;`,
+        "Contact us today", ` href="${ROUTES.contact}"`))));
 
 const whatWeDo = el("div",
-  // padding-bottom stretches the hover target down to the header's bottom edge
-  // (25px header padding + 1px border), so there is no gap to fall through;
-  // the negative margin keeps that padding from growing the nav row.
+  // Not position: relative — see megaPanel. padding-bottom stretches the hover
+  // target down to the header's bottom edge (25px header padding + 1px border)
+  // so there is no gap to fall through; the negative margin keeps that padding
+  // from growing the nav row. The 26px is independent of the row height:
+  // panel top = trigger top (25) + row + padding, header bottom = row + 51.
   //
   // --menu-delay holds visibility on for the length of the fade when closing,
   // and drops to 0 when opening so the panel appears at once and then eases in.
-  `position: relative; display: flex; align-items: center; padding-bottom: 26px; margin-bottom: -26px; --menu-open: 0; --menu-y: -10px; --menu-vis: hidden; --menu-delay: 220ms; --menu-rot: 0deg; &:hover { --menu-open: 1; --menu-y: 0px; --menu-vis: visible; --menu-delay: 0ms; --menu-rot: 180deg; } &:focus-within { --menu-open: 1; --menu-y: 0px; --menu-vis: visible; --menu-delay: 0ms; --menu-rot: 180deg; }`,
-  el("a", navLinkStyle + ` display: inline-flex; align-items: center; gap: 8px;`,
-    "What we do" + img(A.chevron, "", `width: 12px; height: auto; flex-shrink: 0; transform: rotate(var(--menu-rot)); transition-property: transform; transition-duration: 220ms; transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);`),
-    ` href="${ROUTES.solutions}"`) +
+  `display: flex; align-items: center; padding-bottom: 26px; margin-bottom: -26px; --menu-open: 0; --menu-y: -10px; --menu-vis: hidden; --menu-delay: 220ms; &:hover { --menu-open: 1; --menu-y: 0px; --menu-vis: visible; --menu-delay: 0ms; } &:focus-within { --menu-open: 1; --menu-y: 0px; --menu-vis: visible; --menu-delay: 0ms; }`,
+  el("a", navLinkStyle, "What we do", ` href="${ROUTES.solutions}"`) +
   megaPanel);
 
 // justify-content is flex-start, not space-between: the menu sits beside the
 // logo rather than being pushed to the far right of the bar.
 export const nav = el("header",
-  `position: sticky; top: 0px; z-index: 50; display: flex; align-items: center; justify-content: flex-start; gap: clamp(20px, 4vw, 56px); padding-top: 25px; padding-bottom: 25px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: rgba(51,51,51,0.92); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #13C000;`,
+  // Translucent black so the home page's background video reads through it.
+  // 0.55 is dark enough to keep the white links legible over the white sections
+  // on the other pages too, which matters because this header is shared.
+  `position: sticky; top: 0px; z-index: 50; display: flex; align-items: center; justify-content: flex-start; gap: clamp(20px, 4vw, 56px); padding-top: 25px; padding-bottom: 25px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: rgba(0,0,0,0.55); backdrop-filter: blur(12px); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #13C000;`,
   el("a", `display: flex; align-items: center; gap: 5px; text-decoration-line: none; flex-shrink: 0;`,
      img(A.logo, "Botnizer", `height: 34px; width: auto;`), ` href="${ROUTES.home}"`) +
   el("nav", `display: flex; flex-wrap: wrap; align-items: center; gap: 30px;`,
      whatWeDo +
      navLinks.map(([h,t]) => el("a", navLinkStyle, esc(t), ` href="${h}"`)).join("")));
 
+// ---- Full-page backdrop for the home page ----
+//
+// Set HERO_VIDEO to the uploaded asset's public URL (or any https URL) to swap
+// the still image for a looping background video. It is a fixed, viewport-sized
+// layer at z-index -1, so it sits behind every section's background: the
+// translucent header and the transparent hero let it show through, and the
+// opaque sections below cover it as the page scrolls. Nothing else has to move.
+export const HERO_VIDEO = null;
+
+const backdropStyle = `position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: cover; z-index: -1;`;
+export const homeBackdrop = HERO_VIDEO
+  ? `<ws.element ws:tag="video" src="${HERO_VIDEO}" autoplay="true" muted="true" loop="true" playsinline="true" aria-hidden="true" ws:style={css\`${backdropStyle}\`}></ws.element>`
+  : img(A.heroBg, "", backdropStyle + ` `);
+
 // ---- Home Hero (65:49366) ----
+// Transparent and full-viewport so the page backdrop shows through behind it.
 export const hero = el("section",
-  `position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: clamp(560px, 62vw, 895px); background-color: #1A1A1A; background-image: url(${"${"}"" }); background-size: cover; background-position: center top; overflow: hidden;`.replace(/background-image[^;]*;\s*/,""),
-  img(A.heroBg, "Restaurant technology in a modern quick service restaurant",
-      `position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: cover; z-index: 0;`) +
+  `position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 100vh; overflow: hidden;`,
   el("div", `position: relative; z-index: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: end; gap: 40px; margin-top: auto; margin-left: 1.39%; margin-right: 1.39%; margin-bottom: 20px; padding-top: clamp(32px, 4vw, 56px); padding-bottom: clamp(32px, 4vw, 56px); padding-left: clamp(24px, 3.5vw, 50px); padding-right: clamp(24px, 3.5vw, 50px); border-radius: 20px; background-color: #333333;`,
     el("div", `display: flex; flex-direction: column;`,
       el("h1", `margin-top: 0px; margin-bottom: 16px; font-family: ${FIRA}; font-weight: 700; font-size: clamp(44px, 10vw, 145px); line-height: 0.97; letter-spacing: -1px; color: #FFFFFF;`, "Restaurant Technology") +
@@ -214,15 +233,15 @@ export const technical = el("section",
 // ---- Footer (65:49297) ----
 const fcol = (heading, links) =>
   el("div", `display: flex; flex-direction: column; gap: 24px;`,
-    el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 24px; color: #333333;`, esc(heading)) +
+    el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 24px; color: #FFFFFF;`, esc(heading)) +
     el("div", `display: flex; flex-direction: column; gap: 10px;`,
-      links.map(([label, href]) => el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: #333333; text-decoration-line: none; padding-top: 6px; padding-bottom: 6px;`, esc(label), ` href="${href}"`)).join("")));
+      links.map(([label, href]) => el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: rgba(255,255,255,0.78); text-decoration-line: none; padding-top: 6px; padding-bottom: 6px; transition-property: color; transition-duration: 160ms; transition-timing-function: ease; &:hover { color: #13C000; }`, esc(label), ` href="${href}"`)).join("")));
 
 export const footer = el("footer",
-  `display: flex; flex-direction: column; gap: 48px; padding-top: 50px; padding-bottom: 50px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #FFFFFF; border-top-width: 1px; border-top-style: solid; border-top-color: #E6E9EE;`,
+  `display: flex; flex-direction: column; gap: 48px; padding-top: 50px; padding-bottom: 50px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #242829; border-top-width: 1px; border-top-style: solid; border-top-color: rgba(255,255,255,0.12);`,
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: start;`,
-    el("h2", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 700; font-size: clamp(28px, 3.2vw, 38px); line-height: 1.15; letter-spacing: -1px; color: #333333;`, "Let’s Connect Today") +
-    el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; color: #464A4B;`,
+    el("h2", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 700; font-size: clamp(28px, 3.2vw, 38px); line-height: 1.15; letter-spacing: -1px; color: #FFFFFF;`, "Let’s Connect Today") +
+    el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; color: rgba(255,255,255,0.72);`,
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text ever since the 1500s.")) +
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; align-items: start;`,
     el("div", `display: flex; flex-direction: column; gap: 24px;`,
@@ -231,11 +250,11 @@ export const footer = el("footer",
     fcol("Experience", EXPERIENCE_LINKS) +
     fcol("Products", PRODUCT_LINKS) +
     fcol("Company", COMPANY_LINKS) +
-    el("div", `display: flex; flex-direction: column; gap: 24px; padding: 20px; background-color: #F3F3F3;`,
-      el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 24px; color: #333333;`, "Let&#39;s Get Started!") +
+    el("div", `display: flex; flex-direction: column; gap: 24px; padding: 20px; border-radius: 10px; background-color: rgba(255,255,255,0.06); border-width: 1px; border-style: solid; border-color: rgba(255,255,255,0.12);`,
+      el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 24px; color: #FFFFFF;`, "Let&#39;s Get Started!") +
       el("div", `display: flex; flex-direction: column; gap: 10px;`,
-        el("p", `margin-top: 0px; margin-bottom: 0px; max-width: 260px; font-family: ${FIRA}; font-weight: 300; font-size: 22px; color: #333333;`, "We&#39;re here to listen and assist.") +
-        el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: #333333; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px;`, "Contact us today", ` href="${ROUTES.contact}"`)))) +
-  el("div", `display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding-top: 24px; border-top-width: 1px; border-top-style: solid; border-top-color: #E6E9EE;`,
-    el("span", `font-family: ${FIRA}; font-weight: 300; font-size: 16px; color: #464A4B;`, "©2025 Botnizer, All rights reserved") +
-    el("a", `margin-left: auto; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #0033C3; text-decoration-line: none;`, "Back to top ↑", ` href="#top"`)), ` id="contact"`);
+        el("p", `margin-top: 0px; margin-bottom: 0px; max-width: 260px; font-family: ${FIRA}; font-weight: 300; font-size: 22px; color: rgba(255,255,255,0.78);`, "We&#39;re here to listen and assist.") +
+        el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: #13C000; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px;`, "Contact us today", ` href="${ROUTES.contact}"`)))) +
+  el("div", `display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding-top: 24px; border-top-width: 1px; border-top-style: solid; border-top-color: rgba(255,255,255,0.12);`,
+    el("span", `font-family: ${FIRA}; font-weight: 300; font-size: 16px; color: rgba(255,255,255,0.6);`, "©2025 Botnizer, All rights reserved") +
+    el("a", `margin-left: auto; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #13C000; text-decoration-line: none;`, "Back to top ↑", ` href="#top"`)), ` id="contact"`);
