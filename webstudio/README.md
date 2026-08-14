@@ -380,13 +380,20 @@ asset URLs were extracted from the saved payloads with a script.
 - The "Share" control in the detail hero is a static link — no share
   behaviour is specified in the design.
 
-## Home page backdrop and background video
+## Home page background video
 
-The home page root carries a fixed, viewport-sized layer at `z-index: -1`
-(`homeBackdrop` in `fig-gen.mjs`), the hero is `min-height: 100vh` with no
-background of its own, and the page root is transparent — so the layer shows
-through behind the translucent header and the hero, and the opaque sections
-below cover it as the page scrolls. No layout moves when the source changes.
+The video lives **inside the hero section**, absolutely positioned and clipped
+by the hero's own `overflow: hidden`, so it cannot reach any other part of the
+page. Layer order within the hero: video (`z-index: 0`) → gradient scrim and
+bottom fade (`1`) → copy (`2`). The page root is an ordinary opaque white page,
+like every other.
+
+An earlier version used a viewport-`fixed` layer at `z-index: -1` behind the
+whole document. In theory the sections above it paint their own opaque
+backgrounds and cover it; in practice it showed through at the foot of the
+page. **Do not reintroduce it** — scoping the media to the section that uses it
+removes a whole class of stacking bug and needs no cooperation from any other
+section.
 
 `HERO_VIDEO` at the top of `build-figma-home.mjs` holds the asset id
 (`rVCSVikBmzJjovMSU9AY4`, the 2.8 MB Acrelec drive-thru teaser). Set it to
@@ -409,11 +416,11 @@ Note the sandbox's only ffmpeg is Playwright's build, compiled with
 `--disable-everything` and just vp8/webm/png — it cannot even demux an mp4, so
 video cannot be transcoded here without installing a full ffmpeg first.
 
-The header is `rgba(0,0,0,0.55)` with a backdrop blur rather than the old
-opaque grey, so the video reads through it. That value is deliberately dark
-enough to keep the white nav links legible over the *white* sections on the
-other pages, since the header is shared. Anything much lighter would break
-them, and there is no scroll-triggered variant without a Webstudio interaction.
+The header is `rgba(0,0,0,0.55)` with a backdrop blur so the video reads
+through it. That value is deliberately dark enough to keep the white nav links
+legible over the *white* sections on the other pages, since the header is
+shared. Anything much lighter would break them, and there is no
+scroll-triggered variant without a Webstudio interaction.
 
 ## Navigation
 

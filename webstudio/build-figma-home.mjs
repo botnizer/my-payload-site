@@ -102,37 +102,40 @@ export const nav = el("header",
      whatWeDo +
      navLinks.map(([h,t]) => el("a", navLinkStyle, esc(t), ` href="${h}"`)).join("")));
 
-// ---- Full-page backdrop for the home page ----
+// ---- Home hero background media ----
 //
-// Set HERO_VIDEO to the uploaded asset's public URL (or any https URL) to swap
-// the still image for a looping background video. It is a fixed, viewport-sized
-// layer at z-index -1, so it sits behind every section's background: the
-// translucent header and the transparent hero let it show through, and the
-// opaque sections below cover it as the page scrolls. Nothing else has to move.
 // Acrelec drive-thru product-line teaser, 2.8 MB. Set to null to fall back to
-// the still image. The boolean props must use React's camelCase spellings and
-// be written as {true}, not "true": as strings they store as type "string" and
-// `muted` never reaches the DOM property, so the browser blocks autoplay.
+// the still image; the slot is the same either way.
+//
+// This lives INSIDE the hero section, absolutely positioned and clipped by the
+// hero's overflow, so it cannot reach any other part of the page. An earlier
+// version used a viewport-fixed layer at z-index -1 behind the whole document;
+// that relied on every following section painting an opaque background over it,
+// which is fragile and showed through at the foot of the page.
+//
+// The boolean props must use React's camelCase spellings and be written as
+// {true}, not "true": as strings they store as type "string", `muted` never
+// reaches the DOM property, and the browser then blocks autoplay.
 export const HERO_VIDEO = "rVCSVikBmzJjovMSU9AY4";
 
-const backdropStyle = `position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: cover; z-index: -1;`;
-export const homeBackdrop = HERO_VIDEO
-  ? `<ws.element ws:tag="video" src={new AssetValue("${HERO_VIDEO}")} poster={new AssetValue("${A.heroBg}")} autoPlay={true} muted={true} loop={true} playsInline={true} preload="auto" aria-hidden="true" tabIndex="-1" ws:style={css\`${backdropStyle}\`}></ws.element>`
-  : img(A.heroBg, "", backdropStyle);
+const heroMediaStyle = `position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: cover; z-index: 0;`;
+const heroMedia = HERO_VIDEO
+  ? `<ws.element ws:tag="video" src={new AssetValue("${HERO_VIDEO}")} poster={new AssetValue("${A.heroBg}")} autoPlay={true} muted={true} loop={true} playsInline={true} preload="auto" aria-hidden="true" tabIndex="-1" ws:style={css\`${heroMediaStyle}\`}></ws.element>`
+  : img(A.heroBg, "", heroMediaStyle);
 
 // ---- Home Hero (65:49366) ----
-// Sits over the fixed background video: no background of its own, a gradient
-// scrim for legibility over moving footage, and a glass text panel instead of
-// the design's solid #333 card. The video keeps playing behind as you scroll,
-// and the bottom fade hands off cleanly into the white trust bar below.
+// Self-contained: the video, the scrim and the copy all live in here, and the
+// section clips its own overflow, so the background media is confined to the
+// top of the page. Layers are video (0) → scrim and bottom fade (1) → copy (2).
 export const hero = el("section",
-  `position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 100vh; overflow: hidden;`,
+  `position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 100vh; overflow: hidden; background-color: #1A1A1A;`,
+  heroMedia +
   // Scrim: darkest at the top (behind the translucent nav) and at the bottom
   // (behind the copy), lightest through the middle so the footage still reads.
-  el("div", `position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 0; background-image: linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.18) 32%, rgba(0,0,0,0.30) 62%, rgba(0,0,0,0.78) 100%);`) +
+  el("div", `position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 1; background-image: linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.18) 32%, rgba(0,0,0,0.30) 62%, rgba(0,0,0,0.78) 100%);`) +
   // Bottom fade into the white section that follows.
-  el("div", `position: absolute; bottom: 0px; left: 0px; width: 100%; height: 160px; z-index: 0; background-image: linear-gradient(180deg, rgba(255,255,255,0) 0%, #FFFFFF 100%);`) +
-  el("div", `position: relative; z-index: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: end; gap: clamp(28px, 3vw, 48px); margin-top: auto; margin-left: auto; margin-right: auto; margin-bottom: clamp(90px, 12vh, 150px); width: calc(100% - clamp(40px, 9.8vw, 140px)); max-width: 1300px; padding-top: clamp(28px, 3.2vw, 44px); padding-bottom: clamp(28px, 3.2vw, 44px); padding-left: clamp(24px, 3.5vw, 48px); padding-right: clamp(24px, 3.5vw, 48px); border-radius: 20px; background-color: rgba(12,12,12,0.34); backdrop-filter: blur(14px); border-width: 1px; border-style: solid; border-color: rgba(255,255,255,0.16); box-shadow: 0px 24px 70px 0px rgba(0,0,0,0.35);`,
+  el("div", `position: absolute; bottom: 0px; left: 0px; width: 100%; height: 160px; z-index: 1; background-image: linear-gradient(180deg, rgba(255,255,255,0) 0%, #FFFFFF 100%);`) +
+  el("div", `position: relative; z-index: 2; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: end; gap: clamp(28px, 3vw, 48px); margin-top: auto; margin-left: auto; margin-right: auto; margin-bottom: clamp(90px, 12vh, 150px); width: calc(100% - clamp(40px, 9.8vw, 140px)); max-width: 1300px; padding-top: clamp(28px, 3.2vw, 44px); padding-bottom: clamp(28px, 3.2vw, 44px); padding-left: clamp(24px, 3.5vw, 48px); padding-right: clamp(24px, 3.5vw, 48px); border-radius: 20px; background-color: rgba(12,12,12,0.34); backdrop-filter: blur(14px); border-width: 1px; border-style: solid; border-color: rgba(255,255,255,0.16); box-shadow: 0px 24px 70px 0px rgba(0,0,0,0.35);`,
     el("div", `display: flex; flex-direction: column;`,
       el("h1", `margin-top: 0px; margin-bottom: 10px; font-family: ${FIRA}; font-weight: 700; font-size: clamp(32px, 4.6vw, 68px); line-height: 1.02; letter-spacing: -1.5px; color: #FFFFFF; text-shadow: 0px 2px 18px rgba(0,0,0,0.45);`, "Restaurant Technology") +
       el("div", `font-family: ${FIRA}; font-weight: 400; font-size: clamp(19px, 2.5vw, 34px); line-height: 1.15; letter-spacing: -0.6px; color: #15CA01; text-shadow: 0px 2px 14px rgba(0,0,0,0.4);`, "Designed for Leading Brands")) +
