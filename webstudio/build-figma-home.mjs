@@ -118,9 +118,13 @@ export const nav = el("header",
 // reaches the DOM property, and the browser then blocks autoplay.
 export const HERO_VIDEO = "rVCSVikBmzJjovMSU9AY4";
 
+// No poster. A poster of the old hero photo flashed a completely different
+// image for about a second on every load before the first video frame painted.
+// With none, the hero's own #1A1A1A shows for that moment, which is close to
+// the scrimmed video and reads as the video simply fading up.
 const heroMediaStyle = `position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: cover; z-index: 0;`;
 const heroMedia = HERO_VIDEO
-  ? `<ws.element ws:tag="video" src={new AssetValue("${HERO_VIDEO}")} poster={new AssetValue("${A.heroBg}")} autoPlay={true} muted={true} loop={true} playsInline={true} preload="auto" aria-hidden="true" tabIndex="-1" ws:style={css\`${heroMediaStyle}\`}></ws.element>`
+  ? `<ws.element ws:tag="video" src={new AssetValue("${HERO_VIDEO}")} autoPlay={true} muted={true} loop={true} playsInline={true} preload="auto" aria-hidden="true" tabIndex="-1" ws:style={css\`${heroMediaStyle}\`}></ws.element>`
   : img(A.heroBg, "", heroMediaStyle);
 
 // ---- Home Hero (65:49366) ----

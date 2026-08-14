@@ -400,6 +400,11 @@ section.
 `null` and the same slot renders the still hero image instead, so the page is
 never in a broken state.
 
+**No `poster`.** A poster pointing at the old hero photo flashed a completely
+different image for about a second on every load, before the first video frame
+painted. Without one, the hero's own `#1A1A1A` covers that moment and reads as
+the video fading up. Only add a poster if it is a frame *from this video*.
+
 **Write the video's boolean props as `{true}`, not `"true"`, and use React's
 camelCase names.** `autoplay="true"` stores as `type: "string"`; `muted` then
 never reaches the DOM *property*, and browsers block autoplay on a video that
@@ -502,6 +507,34 @@ available on touch. Both belong to the mobile pass.
 Note that **none of this can be verified with `get-styles`.** Declarations
 store correctly even when the geometry or hit-testing is wrong. Check it by
 hovering the published page.
+
+## The page `<body>` is not part of any fragment
+
+`insert-fragment` with `mode: "replace"` against a page root replaces the
+**body's children**; the body element itself keeps its own styles, and no
+generator touches them. Out of the box every page body had *zero* declarations
+— including no margin reset — so the browser default `body { margin: 8px }`
+left a white band around the page. It was invisible while the footer was white
+and became obvious the moment the footer went charcoal.
+
+Each page body is therefore set once, via `update-styles`, to
+`margin: 0` on all four sides and `background-color: #242829`. The charcoal
+also means overscroll and any short page show the footer colour rather than
+white. These survive fragment re-inserts, so this is a one-time fix — but any
+**new** page needs it applied.
+
+### Two ways these tools report success while hiding the truth
+
+Both cost real time in this session; check for them before believing a result.
+
+- **`get-styles` paginates.** With several `instanceIds` it returns only the
+  first page of declarations and an instance whose styles exist can look
+  empty. Verify per instance, or follow `nextCursor`. The same applies to
+  `list-texts` and `list-assets` — and to `Counter(...).most_common(n)` on the
+  results, which silently drops the value you are looking for.
+- **`update-styles` returns `ok: true` for a large batch it does not fully
+  apply.** Fifty updates across ten instances landed about twenty. Apply per
+  instance and verify per instance.
 
 ## Shared fragments
 
