@@ -458,7 +458,16 @@ takes a raw `code` string, so arbitrary CSS and JS are available when the
 style pipeline is not enough. That is the general escape hatch; reach for it
 only when the template genuinely cannot do the job.
 
-Three details are load-bearing:
+**`position: fixed` is what makes "transparent" mean anything.** The header is
+a sibling *before* `<main>`, and `position: sticky` keeps it in normal flow —
+so it sits *above* the hero, not over it, and a transparent bar there simply
+reveals the white page wrapper behind it. Going fixed takes it out of flow, the
+100vh hero starts at y=0 and runs underneath, and the bar finally has the video
+to be transparent against. This only applies on the home page; the in-flow
+sticky bar is correct everywhere else, and no other page needs top padding as a
+result.
+
+Three further details are load-bearing:
 
 - **Two embeds, not one.** The `<style>` is server-rendered so the nav is
   already transparent on first paint; the `<script>` sets `clientOnly={true}`,

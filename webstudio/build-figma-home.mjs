@@ -131,7 +131,15 @@ export const nav = el("header",
 // them avoids a flash of the solid bar before hydration.
 const NAV_SCROLL_CSS =
   `<style>` +
-  `header[data-nav='main']{background-color:rgba(0,0,0,0)!important;background-image:none!important;` +
+  // position:fixed is the part that makes "transparent" mean anything. The
+  // header is a sibling *before* <main> and sticky keeps it in normal flow, so
+  // it sits above the hero rather than over it — a transparent bar there just
+  // reveals the white page wrapper behind it. Going fixed takes it out of flow,
+  // so the 100vh hero starts at y=0 and runs underneath the bar, which is what
+  // gives it the video to be transparent against. Home only: the sticky
+  // in-flow bar is correct on every other page.
+  `header[data-nav='main']{position:fixed!important;top:0!important;left:0!important;right:0!important;` +
+  `background-color:rgba(0,0,0,0)!important;background-image:none!important;` +
   `backdrop-filter:none!important;box-shadow:none!important;border-bottom-color:rgba(19,192,0,0)!important;` +
   `transition:background-color .3s ease,backdrop-filter .3s ease,box-shadow .3s ease,border-bottom-color .3s ease}` +
   `header[data-nav='main'][data-scrolled='1']{background-color:rgba(0,0,0,0.72)!important;` +
