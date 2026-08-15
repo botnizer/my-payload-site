@@ -207,14 +207,19 @@ const heroRaw = el("section",
   // edge from video to the next section is cleaner.
   el("div", `position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 1; background-image: linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.18) 32%, rgba(0,0,0,0.30) 62%, rgba(0,0,0,0.78) 100%);`) +
   el("div", `position: relative; z-index: 2; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: end; gap: clamp(28px, 3vw, 48px); margin-top: auto; margin-left: auto; margin-right: auto; margin-bottom: clamp(90px, 12vh, 150px); width: calc(100% - clamp(40px, 9.8vw, 140px)); max-width: 1300px; padding-top: clamp(28px, 3.2vw, 44px); padding-bottom: clamp(28px, 3.2vw, 44px); padding-left: clamp(24px, 3.5vw, 48px); padding-right: clamp(24px, 3.5vw, 48px); border-radius: 20px; background-color: rgba(12,12,12,0.34); backdrop-filter: blur(14px); border-width: 1px; border-style: solid; border-color: rgba(255,255,255,0.16); box-shadow: 0px 24px 70px 0px rgba(0,0,0,0.35);`,
-    el("div", `display: flex; flex-direction: column;`,
-      el("h1", `margin-top: 0px; margin-bottom: 10px; font-family: ${FIRA}; font-weight: 700; font-size: clamp(32px, 4.6vw, 68px); line-height: 1.02; letter-spacing: -1.5px; color: #FFFFFF; text-shadow: 0px 2px 18px rgba(0,0,0,0.45);`, "Restaurant Technology") +
-      el("div", `font-family: ${FIRA}; font-weight: 400; font-size: clamp(19px, 2.5vw, 34px); line-height: 1.15; letter-spacing: -0.6px; color: #15CA01; text-shadow: 0px 2px 14px rgba(0,0,0,0.4);`, "Designed for Leading Brands")) +
-    el("div", `display: flex; flex-direction: column; align-items: flex-start; gap: clamp(20px, 2.2vw, 30px);`,
-      el("p", `margin-top: 0px; margin-bottom: 0px; max-width: 560px; font-family: ${FIRA}; font-weight: 300; font-size: clamp(15px, 1.25vw, 19px); line-height: 1.55; color: rgba(255,255,255,0.92);`,
-         "An API-first platform that unifies digital signage, self ordering kiosks, drive-thru systems, and checkout solutions into one seamless ecosystem.") +
-      el("a", `display: inline-flex; align-items: center; justify-content: center; padding-top: 15px; padding-bottom: 15px; padding-left: 34px; padding-right: 34px; border-radius: 999px; background-color: #FFFFFF; color: #333333; font-family: ${FIRA}; font-weight: 600; font-size: clamp(15px, 1.2vw, 18px); letter-spacing: -0.4px; text-decoration-line: none; white-space: nowrap; transition-property: background-color, color, transform; transition-duration: 180ms; transition-timing-function: ease; &:hover { background-color: #0F9300; color: #FFFFFF; transform: translateY(-2px); }`,
-         "Request a Demo", ` href="${ROUTES.contact}"`))), ` id="top"`);
+    // Every piece of hero copy is labelled individually. The h1 sits three
+    // containers deep, so on the canvas a click lands on a wrapper and the
+    // heading is effectively unreachable; from the navigator these names make
+    // it a single click. They are ordinary text instances and always were —
+    // the problem was finding them, not editing them.
+    withLabel(el("div", `display: flex; flex-direction: column;`,
+      withLabel(el("h1", `margin-top: 0px; margin-bottom: 10px; font-family: ${FIRA}; font-weight: 700; font-size: clamp(32px, 4.6vw, 68px); line-height: 1.02; letter-spacing: -1.5px; color: #FFFFFF; text-shadow: 0px 2px 18px rgba(0,0,0,0.45);`, "Restaurant Technology"), "Hero Heading") +
+      withLabel(el("div", `font-family: ${FIRA}; font-weight: 400; font-size: clamp(19px, 2.5vw, 34px); line-height: 1.15; letter-spacing: -0.6px; color: #15CA01; text-shadow: 0px 2px 14px rgba(0,0,0,0.4);`, "Designed for Leading Brands"), "Hero Subheading")), "Hero Title Block") +
+    withLabel(el("div", `display: flex; flex-direction: column; align-items: flex-start; gap: clamp(20px, 2.2vw, 30px);`,
+      withLabel(el("p", `margin-top: 0px; margin-bottom: 0px; max-width: 560px; font-family: ${FIRA}; font-weight: 300; font-size: clamp(15px, 1.25vw, 19px); line-height: 1.55; color: rgba(255,255,255,0.92);`,
+         "An API-first platform that unifies digital signage, self ordering kiosks, drive-thru systems, and checkout solutions into one seamless ecosystem."), "Hero Body Text") +
+      withLabel(el("a", `display: inline-flex; align-items: center; justify-content: center; padding-top: 15px; padding-bottom: 15px; padding-left: 34px; padding-right: 34px; border-radius: 999px; background-color: #FFFFFF; color: #333333; font-family: ${FIRA}; font-weight: 600; font-size: clamp(15px, 1.2vw, 18px); letter-spacing: -0.4px; text-decoration-line: none; white-space: nowrap; transition-property: background-color, color, transform; transition-duration: 180ms; transition-timing-function: ease; &:hover { background-color: #0F9300; color: #FFFFFF; transform: translateY(-2px); }`,
+         "Request a Demo", ` href="${ROUTES.contact}"`), "Hero CTA Button")), "Hero Copy Block")), ` id="top"`);
 
 // ---- Trust Bar (65:49356) ----
 const trustRaw = el("section",
