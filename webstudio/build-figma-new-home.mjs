@@ -12,14 +12,14 @@ const FIRA = `"Fira Sans", system-ui, sans-serif`;
 // Figma node order: Nav Bar 65:49368, Hero 65:49366, Trust Bar 65:49356,
 // Vision 65:49352, Elevate 65:49353/4, Offering items 65:49357,
 // Technical 65:49360, Results 65:49361, Case Study cards 65:49362, Footer 65:49297.
-const main = `<ws.element ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${trust}${vision}${elevate}${offering}${technical}${results}${caseStudies}</ws.element>`;
+const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${trust}${vision}${elevate}${offering}${technical}${results}${caseStudies}</ws.element>`;
 // The hero owns its own background video, so the page root needs no special
 // treatment — it is an ordinary opaque page like every other.
 //
 // navScrollBehaviour is home-only: it makes the nav transparent over the hero
 // and fades it to black glass on scroll. The other pages open on white and
 // keep the solid bar.
-const page = `<ws.element ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${navScrollBehaviour}${nav}${main}${footer}</ws.element>`;
+const page = `<ws.element ws:label="Home Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${navScrollBehaviour}${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-new-home.json", JSON.stringify({

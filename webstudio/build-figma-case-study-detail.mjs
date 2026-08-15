@@ -1,7 +1,7 @@
 // Case Study Detailed page — Figma YcekX1kGhoti7ssk1sOlnr node 4:36956 (Set B, 1440x6320)
 import fs from "node:fs";
 import { nav, footer, caseStudies } from "./fig-gen.mjs";
-import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL } from "./fig-shared.mjs";
+import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL, withLabel as L } from "./fig-shared.mjs";
 
 const A = {
   hero:   "yzW_aV1I038VjPers-XX7",  // fig-case-1 — the design's hero is byte-identical to it
@@ -121,8 +121,16 @@ const trialCta = el("section",
     img(A.cta, "Botnizer analytics dashboard on desktop and mobile",
         `width: 100%; height: auto; align-self: center; justify-self: end;`)));
 
-const main = `<ws.element ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${article}${gallery}${results}${testimonial}${stories}${caseStudies}${trialCta}</ws.element>`;
-const page = `<ws.element ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${
+  L(hero, "Hero")}${
+  L(article, "Overview and Objectives")}${
+  L(gallery, "Gallery")}${
+  L(results, "Results")}${
+  L(testimonial, "Testimonial")}${
+  L(stories, "Success Stories Heading")}${
+  caseStudies}${
+  L(trialCta, "Free Trial CTA")}</ws.element>`;
+const page = `<ws.element ws:label="Case Study Detail Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-case-study-detail.json", JSON.stringify({

@@ -2,7 +2,7 @@
 // Reuses nav / footer from fig-gen.mjs and the CTA form pattern from the Solutions build.
 import fs from "node:fs";
 import { nav, footer } from "./fig-gen.mjs";
-import { ctaForm, roiCalculator } from "./fig-shared.mjs";
+import { ctaForm, roiCalculator, withLabel as L } from "./fig-shared.mjs";
 
 const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
 const el = (t,s,c="",a="") => `<ws.element ws:tag="${t}"${a}${s?` ws:style={css\`${s}\`}`:""}>${c}</ws.element>`;
@@ -94,7 +94,7 @@ const products = [
    "Industrial-grade media players with remote management, automatic updates, and failover redundancy.",
    ["24/7 Monitoring","Auto Failover"], A.media, "Three-screen digital menu board running a dessert menu", false],
 ];
-const productBands = products.map(([title, body, chips, asset, alt, reversed]) =>
+const productBandsRaw = products.map(([title, body, chips, asset, alt, reversed]) =>
   el("section", `display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: center; gap: clamp(24px, 4vw, 60px); background-color: #F6F8FF;`,
     el("div", `display: flex; flex-direction: column; gap: 20px; padding-top: clamp(40px, 5vw, 70px); padding-bottom: clamp(40px, 5vw, 70px); padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 3vw, 40px); background-color: #FFFFFF; height: 100%; justify-content: center;${reversed?` order: 2;`:``}`,
       el("h2", `margin-top: 0px; margin-bottom: 0px; ${H38}`, esc(title)) +
@@ -104,7 +104,9 @@ const productBands = products.map(([title, body, chips, asset, alt, reversed]) =
           `display: inline-flex; align-items: center; justify-content: center; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 20px; border-radius: 10px; background-color: #F6F8FF; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; color: #464A4B; white-space: nowrap;`,
           esc(c))).join(""))) +
     el("div", `display: flex; align-items: center; justify-content: center; padding-top: clamp(24px, 3vw, 40px); padding-bottom: clamp(24px, 3vw, 40px); padding-left: 20px; padding-right: 20px; background-color: #F6F8FF;${reversed?` order: 1;`:``}`,
-      img(asset, esc(alt), `width: 100%; max-width: 620px; height: auto;`)))).join("");
+      img(asset, esc(alt), `width: 100%; max-width: 620px; height: auto;`))));
+// Each band is named after its own product so the navigator lists them apart.
+const productBands = productBandsRaw.map((band, i) => L(band, products[i][0])).join("");
 
 // ---- 7. AI-Powered Drive-Thru Optimization (4:36697 / component 4:28113) ----
 const optimizations = [
@@ -173,8 +175,16 @@ const stories = el("section",
       testimonial(A.av1, "Blessing welcomed ladyship she met humoured sir breeding her.", "Linda, Project Manager") +
       testimonial(A.av2, "Wisdom new and valley answer. Contented it so is discourse recommend. Man its upon him call mile.", "Linda, Project Manager"))), ` id="cases"`);
 
-const main = `<ws.element ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${challenges}${visual}${productBands}${optimization}${roiCalculator("Drive-Thru ROI Calculator","See exactly how digital signage transforms your drive-thru profitability. Based on data from 200+ QSR deployments.")}${integration}${stories}${ctaForm}</ws.element>`;
-const page = `<ws.element ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${
+  L(hero, "Hero")}${
+  L(challenges, "Drive-Thru Bottleneck")}${
+  L(visual, "Product Line Visual")}${
+  productBands}${
+  L(optimization, "AI Optimization")}${
+  roiCalculator("Drive-Thru ROI Calculator","See exactly how digital signage transforms your drive-thru profitability. Based on data from 200+ QSR deployments.")}${
+  L(integration, "System Integrations")}${
+  L(stories, "Drive-Thru Success Stories")}${ctaForm}</ws.element>`;
+const page = `<ws.element ws:label="Drive-Thru Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-drive-thru.json", JSON.stringify({

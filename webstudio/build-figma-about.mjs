@@ -2,7 +2,7 @@
 // Reuses nav / trust / footer from fig-gen.mjs and helpers from fig-shared.mjs.
 import fs from "node:fs";
 import { nav, footer, trust } from "./fig-gen.mjs";
-import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL } from "./fig-shared.mjs";
+import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL, withLabel as L } from "./fig-shared.mjs";
 
 const A = {
   hero:     "T-M5YIBuHiHxq5RocTERN",  // ab-hero.jpg    (4:36359 restaurant interior + kiosk)
@@ -62,7 +62,7 @@ const pillars = [
    "To empower businesses to transform customer interactions into meaningful experiences by leveraging cutting-edge technology, data-driven strategies, and a team of skilled experts. From enhancing drive-thru journeys to implementing kiosks and digital signage, we strive to help brands achieve their goals and maintain a competitive edge.",
    A.mcd, "McDonald's restaurant exterior lit up at night", "#FFFFFF", "cover"],
 ];
-const pillarSections = pillars.map(([label, title, body, asset, alt, bg, fit], i) =>
+const pillarSectionsRaw = pillars.map(([label, title, body, asset, alt, bg, fit], i) =>
   el("section", `display: flex; flex-direction: column; gap: 32px; padding-top: clamp(40px, 5vw, 70px); padding-bottom: clamp(40px, 5vw, 70px); ${PAD} background-color: #FFFFFF;`,
     el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; align-items: start; width: 100%; max-width: 1300px; margin-left: auto; margin-right: auto;`,
       el("div", `display: flex; flex-direction: column; gap: 4px;${i===1?` order: 2;`:``}`,
@@ -70,7 +70,9 @@ const pillarSections = pillars.map(([label, title, body, asset, alt, bg, fit], i
         el("h2", `margin-top: 0px; margin-bottom: 0px; ${H38}`, esc(title))) +
       el("p", `margin-top: 0px; margin-bottom: 0px; ${BODY}${i===1?` order: 1;`:``}`, esc(body))) +
     el("div", `display: flex; align-items: center; justify-content: center; width: 100%; max-width: 1300px; margin-left: auto; margin-right: auto; border-radius: 10px; background-color: ${bg}; overflow: hidden;`,
-      img(asset, esc(alt), `width: 100%; height: auto; max-height: 560px; object-fit: ${fit};`)))).join("");
+      img(asset, esc(alt), `width: 100%; height: auto; max-height: 560px; object-fit: ${fit};`))));
+// "Our Purpose" / "Our Vision" / "Our Mission" — the eyebrow label names the section.
+const pillarSections = pillarSectionsRaw.map((section, i) => L(section, pillars[i][0])).join("");
 
 // ---- 6. Our Impact (4:28863) ----
 const impact = [["40","Avg. Efficiency Gain"],["98.2","Client Satisfaction"],["28","Avg. Error Reduction"],["99.9","System Uptime"]];
@@ -108,8 +110,15 @@ const trialCta = el("section",
     img(A.cta, "Botnizer analytics dashboard on desktop and mobile",
         `width: 100%; height: auto; align-self: center; justify-self: end;`)));
 
-const main = `<ws.element ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${connection}${pillarSections}${impactSection}${ceo}${trust}${trialCta}</ws.element>`;
-const page = `<ws.element ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${
+  L(hero, "Hero")}${
+  L(connection, "The Art of Connection")}${
+  pillarSections}${
+  L(impactSection, "Our Impact")}${
+  L(ceo, "Hear from Our CEO")}${
+  trust}${
+  L(trialCta, "Free Trial CTA")}</ws.element>`;
+const page = `<ws.element ws:label="About Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-about.json", JSON.stringify({

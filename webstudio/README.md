@@ -591,6 +591,39 @@ Both cost real time in this session; check for them before believing a result.
 - **`update-styles` returns `ok: true` for a large batch it does not fully
   apply.** Fifty updates across ten instances landed about twenty. Apply per
   instance and verify per instance.
+- **`insert-fragment` will happily push a stale `.temp/` file.** The generators
+  live in this repo, but the CLI only runs in the *linked working folder* (the
+  one holding `.webstudio/`). Generate in one directory and insert from the
+  other and `--input-file .temp/fig-page.json` resolves against the working
+  folder's leftovers from a previous run: the insert reports `ok` with a
+  plausible instance count while pushing week-old markup over the live page.
+  It cost a full round of re-inserts here. Use
+  [`build-and-insert.sh`](build-and-insert.sh), which copies, generates and
+  inserts in the working folder and deletes each `.temp` file before
+  regenerating it, so a failed generator cannot leave a stale one behind.
+
+## Navigator labels
+
+Every instance carries a `ws:label`, so the Webstudio navigator shows "Hero",
+"Mega Panel", "Our Mission" rather than a wall of identical "Div" / "Section"
+rows. Labels are applied in the generators — `withLabel` in `fig-shared.mjs`
+(re-declared in `build-figma-home.mjs`, which imports nothing) — rather than by
+hand in the builder, because `ws:label` is understood by the fragment parser
+and anything applied by hand is destroyed by the next `mode: "replace"`.
+
+Shared fragments are labelled at their definition, so every page inherits the
+same names for the nav and footer. Page-specific sections are labelled at the
+composition point (the `main` template literal), which keeps the section order
+and its navigator name readable as one list. Repeated bands built by `.map()`
+are named from their own data — the product name on Drive-Thru, the feature
+title on Digital Signage, the eyebrow on About — so they can be told apart.
+
+To check labels landed, ask for the structural depth only; `list-instances`
+defaults to a 20-row page and the section rows fall off the end:
+
+```bash
+npx webstudio list-instances '{"rootInstanceId":"<root>","maxDepth":4,"limit":200}' --json
+```
 
 ## Shared fragments
 

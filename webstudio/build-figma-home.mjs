@@ -12,6 +12,13 @@ export const A = {
 };
 const FIRA = `"Fira Sans", system-ui, sans-serif`;
 
+// Navigator labels. Without these, every instance shows as "Div"/"Section" in
+// the Webstudio navigator and the page is impossible to navigate by hand.
+// ws:label is understood by the fragment parser, so keeping labels here means
+// they survive every rebuild instead of being re-applied one call at a time.
+const withLabel = (jsx, label) => jsx.replace("<ws.element", `<ws.element ws:label="${label}"`);
+
+
 // ---- Nav Bar (65:49368) + "What we do" dropdown panel (0:26 / 0:27) ----
 //
 // Site routes, in one place so the nav dropdown and the footer cannot drift.
@@ -87,11 +94,11 @@ const whatWeDo = el("div",
   // and drops to 0 when opening so the panel appears at once and then eases in.
   `display: flex; align-items: center; padding-bottom: 26px; margin-bottom: -26px; --menu-open: 0; --menu-y: -10px; --menu-vis: hidden; --menu-delay: 220ms; &:hover { --menu-open: 1; --menu-y: 0px; --menu-vis: visible; --menu-delay: 0ms; } &:focus-within { --menu-open: 1; --menu-y: 0px; --menu-vis: visible; --menu-delay: 0ms; }`,
   el("a", navLinkStyle, "What we do", ` href="${ROUTES.solutions}"`) +
-  megaPanel);
+  withLabel(megaPanel, "Mega Panel"));
 
 // justify-content is flex-start, not space-between: the menu sits beside the
 // logo rather than being pushed to the far right of the bar.
-export const nav = el("header",
+const navRaw = el("header",
   // Black gloss, not grey haze.
   //
   // A flat rgba(0,0,0,0.55) sheet over bright footage averages out to grey: it
@@ -106,9 +113,9 @@ export const nav = el("header",
   `position: sticky; top: 0px; z-index: 50; display: flex; align-items: center; justify-content: flex-start; gap: clamp(20px, 4vw, 56px); padding-top: 25px; padding-bottom: 25px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: rgba(0,0,0,0.58); background-image: linear-gradient(180deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.66) 55%, rgba(0,0,0,0.54) 100%); backdrop-filter: blur(20px) saturate(170%); box-shadow: inset 0px 1px 0px 0px rgba(255,255,255,0.12), 0px 10px 30px 0px rgba(0,0,0,0.28); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #13C000;`,
   el("a", `display: flex; align-items: center; gap: 5px; text-decoration-line: none; flex-shrink: 0;`,
      img(A.logo, "Botnizer", `height: 34px; width: auto;`), ` href="${ROUTES.home}"`) +
-  el("nav", `display: flex; flex-wrap: wrap; align-items: center; gap: 30px;`,
-     whatWeDo +
-     navLinks.map(([h,t]) => el("a", navLinkStyle, esc(t), ` href="${h}"`)).join("")),
+  withLabel(el("nav", `display: flex; flex-wrap: wrap; align-items: center; gap: 30px;`,
+     withLabel(whatWeDo, "What We Do (dropdown)") +
+     navLinks.map(([h,t]) => el("a", navLinkStyle, esc(t), ` href="${h}"`)).join("")), "Menu Links"),
   // Hook for the scroll behaviour below. Harmless on the pages that do not
   // opt in — it is only an attribute until some CSS targets it.
   ` data-nav="main"`);
@@ -188,7 +195,7 @@ const heroMedia = HERO_VIDEO
 // Self-contained: the video, the scrim and the copy all live in here, and the
 // section clips its own overflow, so the background media is confined to the
 // top of the page. Layers are video (0) → scrim and bottom fade (1) → copy (2).
-export const hero = el("section",
+const heroRaw = el("section",
   `position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 100vh; overflow: hidden; background-color: #1A1A1A;`,
   heroMedia +
   // Scrim: darkest at the top (behind the transparent nav) and at the bottom
@@ -210,7 +217,7 @@ export const hero = el("section",
          "Request a Demo", ` href="${ROUTES.contact}"`))), ` id="top"`);
 
 // ---- Trust Bar (65:49356) ----
-export const trust = el("section",
+const trustRaw = el("section",
   `display: flex; flex-direction: column; align-items: center; padding-top: clamp(56px, 7vw, 100px); padding-bottom: clamp(56px, 7vw, 100px); padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #FFFFFF;`,
   el("p", `margin-top: 0px; margin-bottom: 10px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; color: #333333; text-align: center;`, "Trusted by") +
   el("p", `margin-top: 0px; margin-bottom: 48px; font-family: ${FIRA}; font-weight: 600; font-size: clamp(26px, 3vw, 36px); letter-spacing: -1px; color: #333333; text-align: center;`, "100+ Businesses") +
@@ -218,7 +225,7 @@ export const trust = el("section",
      A.partners.map((id,i) => img(id, `Partner logo ${i+1}`, `width: 100%; max-width: 160px; height: auto;`)).join("")));
 
 // ---- Vision (65:49352) ----
-export const vision = el("section",
+const visionRaw = el("section",
   `display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: center; gap: 48px; padding-top: clamp(56px, 7vw, 100px); padding-bottom: clamp(56px, 7vw, 100px); padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #FFFFFF;`,
   el("div", `display: flex; flex-direction: column;`,
     el("p", `margin-top: 0px; margin-bottom: 12px; font-family: ${FIRA}; font-weight: 300; font-size: clamp(24px, 2.8vw, 40px); letter-spacing: -1px; color: #9C9C9C;`, "Our Vision") +
@@ -230,7 +237,7 @@ export const vision = el("section",
   img("sEUXYxB9QbH9hzQJqwUCR", "Connected restaurant technology illustration", `width: 100%; height: auto; justify-self: center;`), ` id="about"`);
 
 // ---- Elevate your brand (65:49353 / 65:49354) ----
-export const elevate = el("section",
+const elevateRaw = el("section",
   `display: flex; flex-direction: column; padding-top: clamp(48px, 6vw, 90px); padding-bottom: clamp(24px, 3vw, 40px); padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #FFFFFF;`,
   el("h2", `margin-top: 0px; margin-bottom: 24px; max-width: 640px; font-family: ${FIRA}; font-weight: 700; font-size: clamp(36px, 5vw, 70px); line-height: 1.08; letter-spacing: -1px; color: #333333;`, "Elevate your brand!") +
   el("p", `margin-top: 0px; margin-bottom: 0px; max-width: 640px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; color: #464A4B;`,
@@ -245,7 +252,7 @@ const offerings = [
   ["Digital Menu Board","Dynamic digital menu boards that enhance customer engagement, showcase your dishes, and boost sales while streamlining operations.","ZQSZCRz1MYJtabOsi0OOY"],
   ["Drive Thru Audio System","High-quality drive-thru audio solution delivering clear communication, improved order accuracy, and AI-ready performance for future-proof operations.","F_SbF_pBTzq5J4KD3qnTP"],
 ];
-export const offering = el("section",
+const offeringRaw = el("section",
   `padding-top: clamp(32px, 4vw, 60px); padding-bottom: clamp(56px, 7vw, 100px); padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #FFFFFF;`,
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; max-width: 1080px; margin-left: auto; margin-right: auto;`,
     offerings.map(([title, body, asset]) =>
@@ -256,7 +263,7 @@ export const offering = el("section",
 
 // ---- Results (65:49361) ----
 const stats = [["+34%","Increase in peak hour throughput"],["-22%","Reduction in order errors"],["-48s","Shaved off average drive-thru time"]];
-export const results = el("section",
+const resultsRaw = el("section",
   `display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; padding-top: clamp(56px, 7vw, 100px); padding-bottom: clamp(56px, 7vw, 100px); padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #FFFFFF;`,
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; align-content: start;`,
     stats.map(([n,l]) =>
@@ -274,7 +281,7 @@ const cases = [
   ["Inconsistent quality across food trucks and brick-and-mortar","Unified cloud-based platform for all locations","Standardized processes, 30% faster service","Fp2dhi4lJ_Sjg55pBkmCu"],
   ["Delivery timing and driver coordination","Integrated delivery dispatch with kitchen timing","25% faster delivery, 18% more deliveries per shift","Du-jEIgZ5rOiivQVTUIbB"],
 ];
-export const caseStudies = el("section",
+const caseStudiesRaw = el("section",
   `padding-top: clamp(40px, 5vw, 70px); padding-bottom: clamp(56px, 7vw, 100px); padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #FFFFFF;`,
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1280px; margin-left: auto; margin-right: auto;`,
     cases.map(([title, solution, res, asset]) =>
@@ -289,7 +296,7 @@ export const caseStudies = el("section",
 
 // ---- Technical (65:49360) ----
 const integrations = [["cdkhmIrpwW3T6HQnyNCNF","Toast POS"],["SCeTgxgnQMJ6uY7-5Lm5Z","NCR Aloha"],["tu_tMDg9xB6i7p4heNTve","Kitchen Display"],["sH5ZMAYft7s2bSKXf19DY","Micros"],["sDBLLj0UbzXNKsh6PODJS","CRM"]];
-export const technical = el("section",
+const technicalRaw = el("section",
   `display: flex; flex-direction: column; align-items: center; padding-top: clamp(60px, 8vw, 96px); padding-bottom: clamp(60px, 8vw, 96px); padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #333333;`,
   el("h2", `margin-top: 0px; margin-bottom: 28px; max-width: 620px; font-family: ${FIRA}; font-weight: 600; font-size: clamp(26px, 3vw, 38px); line-height: 1.05; color: #FFFFFF; text-align: center;`, "An API-First Platform Built for Integration &amp; Scale") +
   el("p", `margin-top: 0px; margin-bottom: 44px; max-width: 860px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 34px; color: #FFFFFF; text-align: center;`,
@@ -316,7 +323,7 @@ const fcol = (heading, links) =>
     el("div", `display: flex; flex-direction: column; gap: 10px;`,
       links.map(([label, href]) => el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: rgba(255,255,255,0.78); text-decoration-line: none; padding-top: 6px; padding-bottom: 6px; transition-property: color; transition-duration: 160ms; transition-timing-function: ease; &:hover { color: #13C000; }`, esc(label), ` href="${href}"`)).join("")));
 
-export const footer = el("footer",
+const footerRaw = el("footer",
   `display: flex; flex-direction: column; gap: 48px; padding-top: 50px; padding-bottom: 50px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: #242829; border-top-width: 1px; border-top-style: solid; border-top-color: rgba(255,255,255,0.12);`,
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: start;`,
     el("h2", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 700; font-size: clamp(28px, 3.2vw, 38px); line-height: 1.15; letter-spacing: -1px; color: #FFFFFF;`, "Let’s Connect Today") +
@@ -337,3 +344,15 @@ export const footer = el("footer",
   el("div", `display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding-top: 24px; border-top-width: 1px; border-top-style: solid; border-top-color: rgba(255,255,255,0.12);`,
     el("span", `font-family: ${FIRA}; font-weight: 300; font-size: 16px; color: rgba(255,255,255,0.6);`, "©2025 Botnizer, All rights reserved") +
     el("a", `margin-left: auto; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #13C000; text-decoration-line: none;`, "Back to top ↑", ` href="#top"`)), ` id="contact"`);
+
+// ---- Navigator labels for the shared fragments ----
+export const nav = withLabel(navRaw, "Nav Bar");
+export const hero = withLabel(heroRaw, "Hero");
+export const trust = withLabel(trustRaw, "Trust Bar");
+export const vision = withLabel(visionRaw, "Vision");
+export const elevate = withLabel(elevateRaw, "Elevate Your Brand");
+export const offering = withLabel(offeringRaw, "Offering Cards");
+export const technical = withLabel(technicalRaw, "Technical Platform");
+export const results = withLabel(resultsRaw, "Results Stats");
+export const caseStudies = withLabel(caseStudiesRaw, "Case Study Cards");
+export const footer = withLabel(footerRaw, "Footer");

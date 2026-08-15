@@ -2,7 +2,7 @@
 // Reuses nav / offering / caseStudies / footer from fig-gen.mjs so shared chrome stays in one place.
 import fs from "node:fs";
 import { nav, footer, offering, caseStudies } from "./fig-gen.mjs";
-import { ctaForm } from "./fig-shared.mjs";
+import { ctaForm, withLabel as L } from "./fig-shared.mjs";
 
 const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
 const el = (t,s,c="",a="") => `<ws.element ws:tag="${t}"${a}${s?` ws:style={css\`${s}\`}`:""}>${c}</ws.element>`;
@@ -118,8 +118,18 @@ const stories = el("section",
   `display: flex; flex-direction: column; align-items: center; padding-top: clamp(48px, 6vw, 90px); padding-bottom: 0px; ${PAD} background-color: #FFFFFF;`,
   el("h2", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 600; font-size: clamp(28px, 3.2vw, 38px); letter-spacing: -1px; color: #333333; text-align: center;`, "Success Stories"));
 
-const main = `<ws.element ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${results}${offeringsIntro}${offering}${categories}${advantage}${stories}${caseStudies}${ctaForm}</ws.element>`;
-const page = `<ws.element ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+// Labels are applied here rather than at each definition so the section order
+// and its navigator name read as one list.
+const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${
+  L(hero, "Hero")}${
+  L(results, "Measurable Results")}${
+  L(offeringsIntro, "Our Solutions Intro")}${
+  offering}${
+  L(categories, "Solution Categories")}${
+  L(advantage, "Platform Advantage")}${
+  L(stories, "Success Stories Heading")}${
+  caseStudies}${ctaForm}</ws.element>`;
+const page = `<ws.element ws:label="Solutions Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-solutions.json", JSON.stringify({

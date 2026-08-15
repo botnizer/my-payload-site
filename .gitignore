@@ -27,3 +27,9 @@ tsconfig.tsbuildinfo
 # Webstudio CLI local link state
 .webstudio/
 .mcp.json
+
+# Webstudio working-folder artefacts. fig-gen.mjs is a copy of
+# build-figma-home.mjs and .temp holds generated fragment JSON — both are
+# produced by webstudio/build-and-insert.sh, neither is a source file.
+webstudio/.temp/
+webstudio/fig-gen.mjs

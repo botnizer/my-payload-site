@@ -3,7 +3,7 @@
 // the ROI calculator from fig-shared.mjs.
 import fs from "node:fs";
 import { nav, footer, technical } from "./fig-gen.mjs";
-import { esc, el, img, FIRA, POP, PAD, H38, H36C, BODY, PILL, roiCalculator } from "./fig-shared.mjs";
+import { esc, el, img, FIRA, POP, PAD, H38, H36C, BODY, PILL, roiCalculator, withLabel as L } from "./fig-shared.mjs";
 
 const A = {
   hero:        "18FpsDaqSp8wwv25DlufR",  // ds-hero.jpg (slider 4:36466)
@@ -90,7 +90,7 @@ const features = [
     ["Energy Efficient:","Low power consumption with auto-brightness"]],
    A.driveThru, "Outdoor drive-thru menu board and speaker post", true],
 ];
-const featureBands = features.map(([title, intro, bullets, asset, alt, imageFirst]) =>
+const featureBandsRaw = features.map(([title, intro, bullets, asset, alt, imageFirst]) =>
   el("section", `display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: center; gap: clamp(24px, 4vw, 60px); background-color: #F6F8FF;`,
     el("div", `display: flex; align-items: center; justify-content: center; padding-top: clamp(24px, 3vw, 40px); padding-bottom: clamp(24px, 3vw, 40px); padding-left: 20px; padding-right: 20px; background-color: #F6F8FF;${imageFirst?``:` order: 2;`}`,
       img(asset, esc(alt), `width: 100%; max-width: 600px; height: auto; max-height: 520px; object-fit: contain;`)) +
@@ -99,7 +99,9 @@ const featureBands = features.map(([title, intro, bullets, asset, alt, imageFirs
       el("p", `margin-top: 0px; margin-bottom: 0px; ${BODY}`, esc(intro)) +
       el("ul", `display: flex; flex-direction: column; margin-top: 0px; margin-bottom: 0px; padding-left: 27px; list-style-type: disc;`,
         bullets.map(([label, rest]) => el("li", `${BODY}`,
-          el("span", `font-weight: 500;`, esc(label)) + " " + esc(rest))).join(""))))).join("");
+          el("span", `font-weight: 500;`, esc(label)) + " " + esc(rest))).join("")))));
+// Each band is named after its own feature so the navigator lists them apart.
+const featureBands = featureBandsRaw.map((band, i) => L(band, features[i][0])).join("");
 
 // ---- 7. Drive-Thru Optimization band (4:36473) ----
 const driveThruBand = el("section",
@@ -123,8 +125,16 @@ const trialCta = el("section",
     img(A.cta, "Botnizer analytics dashboard on desktop and mobile",
         `width: 100%; height: auto; align-self: center; justify-self: end;`)));
 
-const main = `<ws.element ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${stats}${collage}${featureBands}${driveThruBand}${technical}${roiCalculator("Proven Return on Investment","Digital signage pays for itself in months, not years. Here is what our customers see.")}${trialCta}</ws.element>`;
-const page = `<ws.element ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${
+  L(hero, "Hero")}${
+  L(stats, "ROI Stat Strip")}${
+  L(collage, "Picture Collage")}${
+  featureBands}${
+  L(driveThruBand, "Drive-Thru Optimization")}${
+  technical}${
+  roiCalculator("Proven Return on Investment","Digital signage pays for itself in months, not years. Here is what our customers see.")}${
+  L(trialCta, "Free Trial CTA")}</ws.element>`;
+const page = `<ws.element ws:label="Digital Signage Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-digital-signage.json", JSON.stringify({

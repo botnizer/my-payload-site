@@ -5,6 +5,13 @@
 // later page and are reused since: the JSX helpers, the gradient icon card, the
 // dark CTA form band (4:36112 / 4:36834) and the ROI calculator (4:36698 / 4:36479).
 
+// Navigator labels. Without a ws:label every instance shows as "Div"/"Section"
+// in the Webstudio navigator, which makes a 40-section page impossible to work
+// in by hand. ws:label is understood by the fragment parser, so applying labels
+// here means they survive every rebuild instead of being re-applied one call at
+// a time in the builder.
+export const withLabel = (jsx, label) => jsx.replace("<ws.element", `<ws.element ws:label="${label}"`);
+
 export const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
 export const el = (t,s,c="",a="") => `<ws.element ws:tag="${t}"${a}${s?` ws:style={css\`${s}\`}`:""}>${c}</ws.element>`;
 export const img = (id,alt,s) => `<$.Image src={new AssetValue("${id}")} alt="${alt}" ws:style={css\`${s}\`} />`;
@@ -36,7 +43,7 @@ const field = (label, tag, attrs) => el("label",
   esc(label) + `<ws.element ws:tag="${tag}"${attrs} ws:style={css\`${fieldStyle}\`}></ws.element>`);
 
 // The shared footer owns id="contact", so this band anchors as #get-in-touch.
-export const ctaForm = el("section",
+const ctaFormRaw = el("section",
   `padding-top: clamp(56px, 7vw, 100px); padding-bottom: clamp(56px, 7vw, 100px); ${PAD} background-color: #111111; background-image: radial-gradient(ellipse 80% 100% at 20% 40%, #2A2A2A 0%, #1A1A1A 45%, #111111 100%);`,
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: center; max-width: 1300px; margin-left: auto; margin-right: auto;`,
     el("div", `display: flex; flex-direction: column; max-width: 528px;`,
@@ -74,7 +81,7 @@ const total = (label, value, primary) => el("div",
   el("span", `font-family: ${POP}; font-weight: 600; font-size: 14px; color: ${primary?"#FFFFFF":"#333333"}; text-align: center;`, esc(label)) +
   el("span", `font-family: ${POP}; font-weight: 700; font-size: ${primary?"20px":"22px"}; color: ${primary?"#FFFFFF":"#333333"};`, esc(value)));
 
-export const roiCalculator = (heading, intro) => el("section",
+const roiCalculatorRaw = (heading, intro) => el("section",
   `display: flex; flex-direction: column; align-items: center; padding-top: clamp(48px, 6vw, 90px); padding-bottom: clamp(48px, 6vw, 90px); ${PAD} background-color: #FCFCFC;`,
   el("h2", `margin-top: 0px; margin-bottom: 12px; ${H36C}`, esc(heading)) +
   el("p", `margin-top: 0px; margin-bottom: 40px; max-width: 800px; ${BODY} letter-spacing: normal; text-align: center;`, esc(intro)) +
@@ -115,3 +122,7 @@ export const roiCalculator = (heading, intro) => el("section",
       total("Total cost of outstanding shares","£1,987,500", false) +
       total("Post-tax value estimate","£1,564.21", false) +
       total("Pre-tax value estimate","£1,987,500", false))));
+
+// ---- Navigator labels for the shared fragments ----
+export const ctaForm = withLabel(ctaFormRaw, "Get in Touch CTA");
+export const roiCalculator = (heading, intro) => withLabel(roiCalculatorRaw(heading, intro), "ROI Calculator");

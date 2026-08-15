@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { nav, footer, caseStudies } from "./fig-gen.mjs";
+import { withLabel as L } from "./fig-shared.mjs";
 const esc=(s)=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
 const el=(t,s,c="",a="")=>`<ws.element ws:tag="${t}"${a}${s?` ws:style={css\`${s}\`}`:""}>${c}</ws.element>`;
 const img=(id,alt,s)=>`<$.Image src={new AssetValue("${id}")} alt="${alt}" ws:style={css\`${s}\`} />`;
@@ -106,7 +107,15 @@ const partnerCta = el("section", `display: flex; flex-direction: column; align-i
   el("p",`margin-top: 0px; margin-bottom: 28px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; color: #464A4B; text-align: center;`,"See how Botnizer&#39;s unified platform can transform your operations")+
   el("a",`display: inline-flex; padding-top: 15px; padding-bottom: 15px; padding-left: 34px; padding-right: 34px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 18px; color: #FFFFFF; text-decoration-line: none;`,"Request a Demo",` href="#top"`), ` id="contact"`);
 
-const main=`<ws.element ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${form}${routes}${why}${categories}${stories}${caseStudies}${partnerCta}</ws.element>`;
-const page=`<ws.element ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const main=`<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${
+  L(hero, "Hero")}${
+  L(form, "Contact Form")}${
+  L(routes, "Contact Routes")}${
+  L(why, "Why Partner With Us")}${
+  L(categories, "Solution Categories")}${
+  L(stories, "Success Stories Heading")}${
+  caseStudies}${
+  L(partnerCta, "Partner CTA")}</ws.element>`;
+const page=`<ws.element ws:label="Contact Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
 fs.writeFileSync(".temp/fig-contact.json", JSON.stringify({parentInstanceId:"jgMB3UgyIKyr-2P6vVmPR", fragment:page, mode:"replace"}));
 console.log("fragment:", page.length, "chars");

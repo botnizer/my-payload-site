@@ -1,7 +1,7 @@
 // Case Study page — Figma YcekX1kGhoti7ssk1sOlnr node 4:37161 (Set B, 1440x5178)
 import fs from "node:fs";
 import { nav, footer, trust } from "./fig-gen.mjs";
-import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL } from "./fig-shared.mjs";
+import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL, withLabel as L } from "./fig-shared.mjs";
 
 const A = {
   billboard: "RLqkppj9c3Y5NRUhvg63O",  // cs-billboard.jpg (4:37162 hero)
@@ -100,8 +100,15 @@ const trialCta = el("section",
     img(A.cta, "Botnizer analytics dashboard on desktop and mobile",
         `width: 100%; height: auto; align-self: center; justify-self: end;`)));
 
-const main = `<ws.element ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${hero}${strip}${intro}${talks}${trust}${gallery}${trialCta}</ws.element>`;
-const page = `<ws.element ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${
+  L(hero, "Hero Billboard")}${
+  L(strip, "Intro Strip")}${
+  L(intro, "Real Results Intro")}${
+  L(talks, "Botnizer Talks Cards")}${
+  trust}${
+  L(gallery, "Gallery")}${
+  L(trialCta, "Free Trial CTA")}</ws.element>`;
+const page = `<ws.element ws:label="Case Studies Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-case-studies.json", JSON.stringify({
