@@ -5,7 +5,7 @@
 // script exists so it can be rebuilt reproducibly whenever the shared nav or
 // footer changes.
 import fs from "node:fs";
-import { nav, hero, trust, vision, elevate, offering, technical, results, caseStudies, footer, navScrollBehaviour } from "./fig-gen.mjs";
+import { nav, hero, trust, vision, elevate, offering, technical, results, caseStudies, footer, navScrollBehaviour, mobileNavBehaviour } from "./fig-gen.mjs";
 
 const FIRA = `"Fira Sans", system-ui, sans-serif`;
 
@@ -19,7 +19,7 @@ const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: 
 // navScrollBehaviour is home-only: it makes the nav transparent over the hero
 // and fades it to black glass on scroll. The other pages open on white and
 // keep the solid bar.
-const page = `<ws.element ws:label="Home Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${navScrollBehaviour}${nav}${main}${footer}</ws.element>`;
+const page = `<ws.element ws:label="Home Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${navScrollBehaviour}${mobileNavBehaviour}${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-new-home.json", JSON.stringify({

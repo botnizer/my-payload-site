@@ -1,7 +1,7 @@
 // Solutions page — Figma YcekX1kGhoti7ssk1sOlnr node 4:35995 ("Solutions Page", Set B, 1440x7263)
 // Reuses nav / offering / caseStudies / footer from fig-gen.mjs so shared chrome stays in one place.
 import fs from "node:fs";
-import { nav, footer, offering, caseStudies } from "./fig-gen.mjs";
+import { nav, footer, offering, caseStudies, mobileNavBehaviour } from "./fig-gen.mjs";
 import { ctaForm, withLabel as L } from "./fig-shared.mjs";
 
 const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
@@ -129,7 +129,7 @@ const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: 
   L(advantage, "Platform Advantage")}${
   L(stories, "Success Stories Heading")}${
   caseStudies}${ctaForm}</ws.element>`;
-const page = `<ws.element ws:label="Solutions Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const page = `<ws.element ws:label="Solutions Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${mobileNavBehaviour}${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-solutions.json", JSON.stringify({

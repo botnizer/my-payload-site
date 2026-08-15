@@ -2,7 +2,7 @@
 // Reuses nav / footer / technical from fig-gen.mjs and ctaForm-adjacent helpers +
 // the ROI calculator from fig-shared.mjs.
 import fs from "node:fs";
-import { nav, footer, technical } from "./fig-gen.mjs";
+import { nav, footer, technical, mobileNavBehaviour } from "./fig-gen.mjs";
 import { esc, el, img, FIRA, POP, PAD, H38, H36C, BODY, PILL, roiCalculator, withLabel as L } from "./fig-shared.mjs";
 
 const A = {
@@ -134,7 +134,7 @@ const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: 
   technical}${
   roiCalculator("Proven Return on Investment","Digital signage pays for itself in months, not years. Here is what our customers see.")}${
   L(trialCta, "Free Trial CTA")}</ws.element>`;
-const page = `<ws.element ws:label="Digital Signage Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const page = `<ws.element ws:label="Digital Signage Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${mobileNavBehaviour}${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-digital-signage.json", JSON.stringify({

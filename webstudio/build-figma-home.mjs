@@ -96,6 +96,49 @@ const whatWeDo = el("div",
   el("a", navLinkStyle, "What we do", ` href="${ROUTES.solutions}"`) +
   withLabel(megaPanel, "Mega Panel"));
 
+// ---- Mobile navigation (Figma mobile frames, e.g. 155:59583 "Mobile Menu") ----
+//
+// The mobile design replaces the horizontal link row with a hamburger and a
+// full-screen overlay: X close top-right, a stack of large links, a rule, then
+// social icons. Both pieces live in the markup on every breakpoint and are
+// shown or hidden by the media query in NAV_MOBILE_CSS — Webstudio's `css`
+// template has no @media, and putting the panel in the DOM unconditionally
+// keeps it a real, inspectable part of the nav rather than something injected
+// at runtime.
+//
+// The social icons from the design are deliberately absent: those assets were
+// never uploaded to the project, and inventing substitutes would be worse than
+// leaving the row out until the real ones arrive.
+const MOBILE_LINKS = [
+  ["Solutions", ROUTES.solutions], ["Drive-Thru", ROUTES.driveThru],
+  ["Digital Signage", ROUTES.signage], ["Case Study", ROUTES.cases],
+  ["About", ROUTES.about], ["Contact", ROUTES.contact],
+];
+
+// Three bars drawn with borders rather than an asset, so the colour follows the
+// nav (white over the hero video, and still white over the black glass).
+const bar = `display: block; width: 24px; height: 0px; border-top-width: 2px; border-top-style: solid; border-top-color: currentcolor; border-radius: 2px;`;
+const hamburger = el("button",
+  `display: none; flex-direction: column; justify-content: center; gap: 5px; align-items: flex-end; margin-left: auto; width: 44px; height: 44px; padding: 10px; border-width: 0px; background-color: transparent; color: #FFFFFF; cursor: pointer;`,
+  el("span", bar) + el("span", bar) + el("span", bar),
+  ` type="button" data-menu="toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"`);
+
+const mobileLinkStyle = `font-family: ${FIRA}; font-weight: 400; font-size: clamp(28px, 9vw, 40px); line-height: 1.35; color: #333333; text-decoration-line: none;`;
+const mobilePanel = el("div",
+  // Off-canvas to the right, slid in on open. visibility is transitioned with a
+  // delay so the close stays animated instead of snapping, the same technique
+  // the desktop mega panel uses.
+  `position: fixed; top: 0px; left: 0px; right: 0px; bottom: 0px; z-index: 90; display: flex; flex-direction: column; padding-top: 96px; padding-bottom: 40px; padding-left: clamp(28px, 20vw, 80px); padding-right: 28px; background-color: #FFFFFF; overflow-y: auto; visibility: hidden; opacity: 0; transform: translateX(12%); transition-property: opacity, transform, visibility; transition-duration: 260ms, 260ms, 0ms; transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: 0ms, 0ms, 260ms;`,
+  el("button",
+    `position: absolute; top: 16px; right: 24px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0px; border-width: 0px; background-color: transparent; font-family: ${FIRA}; font-weight: 300; font-size: 34px; line-height: 1; color: #333333; cursor: pointer;`,
+    "&#215;", ` type="button" data-menu="close" aria-label="Close menu"`) +
+  el("div", `display: flex; flex-direction: column; gap: 10px;`,
+    MOBILE_LINKS.map(([label, href]) => el("a", mobileLinkStyle, esc(label), ` href="${href}"`)).join("")) +
+  el("div", `margin-top: 32px; margin-bottom: 32px; border-top-width: 1px; border-top-style: solid; border-top-color: #E6E9EE;`) +
+  el("a", `align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; padding-top: 12px; padding-bottom: 12px; padding-left: 28px; padding-right: 28px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 17px; color: #FFFFFF; text-decoration-line: none;`,
+    "Request a Demo", ` href="${ROUTES.contact}"`),
+  ` id="mobile-menu" data-menu="panel"`);
+
 // justify-content is flex-start, not space-between: the menu sits beside the
 // logo rather than being pushed to the far right of the bar.
 const navRaw = el("header",
@@ -115,7 +158,9 @@ const navRaw = el("header",
      img(A.logo, "Botnizer", `height: 34px; width: auto;`), ` href="${ROUTES.home}"`) +
   withLabel(el("nav", `display: flex; flex-wrap: wrap; align-items: center; gap: 30px;`,
      withLabel(whatWeDo, "What We Do (dropdown)") +
-     navLinks.map(([h,t]) => el("a", navLinkStyle, esc(t), ` href="${h}"`)).join("")), "Menu Links"),
+     navLinks.map(([h,t]) => el("a", navLinkStyle, esc(t), ` href="${h}"`)).join(""), ` data-menu="desktop"`), "Menu Links") +
+  withLabel(hamburger, "Mobile Menu Button") +
+  withLabel(mobilePanel, "Mobile Menu Panel"),
   // Hook for the scroll behaviour below. Harmless on the pages that do not
   // opt in — it is only an attribute until some CSS targets it.
   ` data-nav="main"`);
@@ -165,6 +210,51 @@ const NAV_SCROLL_JS =
 export const navScrollBehaviour =
   `<$.HtmlEmbed code={${JSON.stringify(NAV_SCROLL_CSS)}} />` +
   `<$.HtmlEmbed clientOnly={true} code={${JSON.stringify(NAV_SCROLL_JS)}} />`;
+
+// ---- Mobile nav behaviour (every page) ----
+//
+// Unlike the scroll behaviour this is not opt-in: the hamburger has to work
+// everywhere. The breakpoint is 991px, matching Webstudio's own Tablet
+// breakpoint so the builder's tablet view and the published page agree.
+//
+// This has to be an embed rather than ws:style because it needs @media (which
+// the css template has no syntax for) and descendant selectors (which the
+// template silently drops).
+const NAV_MOBILE_CSS =
+  `<style>` +
+  `@media (max-width: 991px){` +
+  `[data-nav="main"] nav[data-menu="desktop"]{display:none!important}` +
+  `[data-nav="main"] [data-menu="toggle"]{display:flex!important}` +
+  // The bar is a flex row; with the desktop nav gone the logo should sit left
+  // and the hamburger right, with no leftover column gap.
+  `[data-nav="main"]{gap:0!important;padding-top:16px!important;padding-bottom:16px!important}` +
+  `}` +
+  // Open state. Kept outside the media query so a panel left open while the
+  // viewport is resized past the breakpoint still closes cleanly.
+  `[data-menu="panel"][data-open="true"]{visibility:visible!important;opacity:1!important;` +
+  `transform:translateX(0)!important;transition-delay:0ms!important}` +
+  `body[data-menu-open="true"]{overflow:hidden}` +
+  `@media (min-width: 992px){[data-menu="panel"]{display:none!important}}` +
+  `</style>`;
+
+// Closes on link click too — the links are same-origin navigations, and on a
+// route that renders instantly the panel would otherwise stay over the page.
+const NAV_MOBILE_JS =
+  `<script>(function(){` +
+  `var p=document.querySelector('[data-menu="panel"]'),t=document.querySelector('[data-menu="toggle"]');` +
+  `if(!p||!t)return;` +
+  `function set(o){p.setAttribute('data-open',o?'true':'false');` +
+  `t.setAttribute('aria-expanded',o?'true':'false');` +
+  `t.setAttribute('aria-label',o?'Close menu':'Open menu');` +
+  `document.body.setAttribute('data-menu-open',o?'true':'false');}` +
+  `t.addEventListener('click',function(){set(p.getAttribute('data-open')!=='true')});` +
+  `p.addEventListener('click',function(e){if(e.target.closest('[data-menu="close"],a'))set(false)});` +
+  `document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false)});` +
+  `set(false);})();</script>`;
+
+export const mobileNavBehaviour =
+  `<$.HtmlEmbed code={${JSON.stringify(NAV_MOBILE_CSS)}} />` +
+  `<$.HtmlEmbed clientOnly={true} code={${JSON.stringify(NAV_MOBILE_JS)}} />`;
 
 // ---- Home hero background media ----
 //

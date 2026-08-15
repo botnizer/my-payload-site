@@ -1,6 +1,6 @@
 // Case Study page — Figma YcekX1kGhoti7ssk1sOlnr node 4:37161 (Set B, 1440x5178)
 import fs from "node:fs";
-import { nav, footer, trust } from "./fig-gen.mjs";
+import { nav, footer, trust, mobileNavBehaviour } from "./fig-gen.mjs";
 import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL, withLabel as L } from "./fig-shared.mjs";
 
 const A = {
@@ -108,7 +108,7 @@ const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: 
   trust}${
   L(gallery, "Gallery")}${
   L(trialCta, "Free Trial CTA")}</ws.element>`;
-const page = `<ws.element ws:label="Case Studies Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const page = `<ws.element ws:label="Case Studies Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${mobileNavBehaviour}${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-case-studies.json", JSON.stringify({

@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { nav, footer, caseStudies } from "./fig-gen.mjs";
+import { nav, footer, caseStudies, mobileNavBehaviour } from "./fig-gen.mjs";
 import { withLabel as L } from "./fig-shared.mjs";
 const esc=(s)=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
 const el=(t,s,c="",a="")=>`<ws.element ws:tag="${t}"${a}${s?` ws:style={css\`${s}\`}`:""}>${c}</ws.element>`;
@@ -116,6 +116,6 @@ const main=`<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: fl
   L(stories, "Success Stories Heading")}${
   caseStudies}${
   L(partnerCta, "Partner CTA")}</ws.element>`;
-const page=`<ws.element ws:label="Contact Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const page=`<ws.element ws:label="Contact Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${mobileNavBehaviour}${nav}${main}${footer}</ws.element>`;
 fs.writeFileSync(".temp/fig-contact.json", JSON.stringify({parentInstanceId:"jgMB3UgyIKyr-2P6vVmPR", fragment:page, mode:"replace"}));
 console.log("fragment:", page.length, "chars");

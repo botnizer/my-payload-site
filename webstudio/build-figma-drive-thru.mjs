@@ -1,7 +1,7 @@
 // Drive-Thru page — Figma YcekX1kGhoti7ssk1sOlnr node 4:36578 ("Drive-Thru Page", Set B, 1440x10542)
 // Reuses nav / footer from fig-gen.mjs and the CTA form pattern from the Solutions build.
 import fs from "node:fs";
-import { nav, footer } from "./fig-gen.mjs";
+import { nav, footer, mobileNavBehaviour } from "./fig-gen.mjs";
 import { ctaForm, roiCalculator, withLabel as L } from "./fig-shared.mjs";
 
 const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
@@ -184,7 +184,7 @@ const main = `<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: 
   roiCalculator("Drive-Thru ROI Calculator","See exactly how digital signage transforms your drive-thru profitability. Based on data from 200+ QSR deployments.")}${
   L(integration, "System Integrations")}${
   L(stories, "Drive-Thru Success Stories")}${ctaForm}</ws.element>`;
-const page = `<ws.element ws:label="Drive-Thru Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${nav}${main}${footer}</ws.element>`;
+const page = `<ws.element ws:label="Drive-Thru Page" ws:tag="div" ws:style={css\`display: flex; flex-direction: column; font-family: ${FIRA}; color: #333333; background-color: #FFFFFF;\`}>${mobileNavBehaviour}${nav}${main}${footer}</ws.element>`;
 
 fs.mkdirSync(".temp", { recursive: true });
 fs.writeFileSync(".temp/fig-drive-thru.json", JSON.stringify({
