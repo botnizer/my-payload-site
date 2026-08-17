@@ -124,19 +124,31 @@ const hamburger = el("button",
   ` type="button" data-menu="toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"`);
 
 const mobileLinkStyle = `font-family: ${FIRA}; font-weight: 400; font-size: clamp(28px, 9vw, 40px); line-height: 1.35; color: #333333; text-decoration-line: none;`;
-const mobilePanel = el("div",
-  // Off-canvas to the right, slid in on open. visibility is transitioned with a
-  // delay so the close stays animated instead of snapping, the same technique
-  // the desktop mega panel uses.
-  `position: fixed; top: 0px; left: 0px; right: 0px; bottom: 0px; z-index: 90; display: flex; flex-direction: column; padding-top: 96px; padding-bottom: 40px; padding-left: clamp(28px, 20vw, 80px); padding-right: 28px; background-color: #FFFFFF; overflow-y: auto; visibility: hidden; opacity: 0; transform: translateX(12%); transition-property: opacity, transform, visibility; transition-duration: 260ms, 260ms, 0ms; transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: 0ms, 0ms, 260ms;`,
-  el("button",
-    `position: absolute; top: 16px; right: 24px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0px; border-width: 0px; background-color: transparent; font-family: ${FIRA}; font-weight: 300; font-size: 34px; line-height: 1; color: #333333; cursor: pointer;`,
-    "&#215;", ` type="button" data-menu="close" aria-label="Close menu"`) +
+
+// The slide lives on this inner wrapper, never on the panel itself.
+//
+// The panel is pinned to the viewport, so translating *it* off-canvas pushed
+// the document 12% wider — `visibility: hidden` does not take an element out of
+// layout, so the parked panel widened every page and phones opened zoomed out.
+// Sliding the contents inside a panel that clips horizontally gives the same
+// motion with nothing hanging off the edge.
+const mobilePanelInner = el("div",
+  `display: flex; flex-direction: column; transform: translateX(14%); transition-property: transform; transition-duration: 260ms; transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);`,
   el("div", `display: flex; flex-direction: column; gap: 10px;`,
     MOBILE_LINKS.map(([label, href]) => el("a", mobileLinkStyle, esc(label), ` href="${href}"`)).join("")) +
   el("div", `margin-top: 32px; margin-bottom: 32px; border-top-width: 1px; border-top-style: solid; border-top-color: #E6E9EE;`) +
   el("a", `align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; padding-top: 12px; padding-bottom: 12px; padding-left: 28px; padding-right: 28px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 17px; color: #FFFFFF; text-decoration-line: none;`,
     "Request a Demo", ` href="${ROUTES.contact}"`),
+  ` data-menu="inner"`);
+
+const mobilePanel = el("div",
+  // visibility is transitioned with a delay so the close stays animated instead
+  // of snapping — the same technique the desktop mega panel uses.
+  `position: fixed; top: 0px; left: 0px; right: 0px; bottom: 0px; z-index: 90; display: flex; flex-direction: column; padding-top: 96px; padding-bottom: 40px; padding-left: clamp(28px, 20vw, 80px); padding-right: 28px; background-color: #FFFFFF; overflow-y: auto; overflow-x: hidden; visibility: hidden; opacity: 0; transition-property: opacity, visibility; transition-duration: 260ms, 0ms; transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: 0ms, 260ms;`,
+  el("button",
+    `position: absolute; top: 16px; right: 24px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0px; border-width: 0px; background-color: transparent; font-family: ${FIRA}; font-weight: 300; font-size: 34px; line-height: 1; color: #333333; cursor: pointer;`,
+    "&#215;", ` type="button" data-menu="close" aria-label="Close menu"`) +
+  mobilePanelInner,
   ` id="mobile-menu" data-menu="panel"`);
 
 // justify-content is flex-start, not space-between: the menu sits beside the
@@ -232,8 +244,15 @@ const NAV_MOBILE_CSS =
   // Open state. Kept outside the media query so a panel left open while the
   // viewport is resized past the breakpoint still closes cleanly.
   `[data-menu="panel"][data-open="true"]{visibility:visible!important;opacity:1!important;` +
-  `transform:translateX(0)!important;transition-delay:0ms!important}` +
+  `transition-delay:0ms!important}` +
+  `[data-menu="panel"][data-open="true"] [data-menu="inner"]{transform:translateX(0)!important}` +
   `body[data-menu-open="true"]{overflow:hidden}` +
+  // Belt and braces. A single stray wide element anywhere on a long page makes
+  // the whole document scroll sideways and phones open zoomed out; clip stops
+  // one mistake from degrading every section. `clip` rather than `hidden` so it
+  // does not silently turn ancestors into scroll containers and break
+  // position:sticky on the header.
+  `html{overflow-x:clip}body{overflow-x:clip;max-width:100%}` +
   `@media (min-width: 992px){[data-menu="panel"]{display:none!important}}` +
   `</style>`;
 
