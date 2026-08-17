@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { nav, footer, caseStudies, mobileNavBehaviour } from "./fig-gen.mjs";
-import { withLabel as L } from "./fig-shared.mjs";
+import { withLabel as L , LINK_HOVER, CARD_HOVER, BTN_HOVER} from "./fig-shared.mjs";
 const esc=(s)=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
 const el=(t,s,c="",a="")=>`<ws.element ws:tag="${t}"${a}${s?` ws:style={css\`${s}\`}`:""}>${c}</ws.element>`;
 const img=(id,alt,s)=>`<$.Image src={new AssetValue("${id}")} alt="${alt}" ws:style={css\`${s}\`} />`;
@@ -30,7 +30,7 @@ const form = el("section", `display: grid; grid-template-columns: repeat(auto-fi
       field("Number of Locations","input",` type="text" name="locations"`))+
     field("What’s your biggest operational challenge?","input",` type="text" name="challenge"`)+
     field("Tell us more","textarea",` name="message" rows="4"`)+
-    el("button", `align-self: flex-start; padding-top: 15px; padding-bottom: 15px; padding-left: 34px; padding-right: 34px; border-radius: 999px; border-width: 0px; background-color: #0F9300; font-family: ${POP}; font-weight: 400; font-size: 18px; color: #FFFFFF; cursor: pointer;`, "Request a Personalize Demo", ` type="submit"`)+
+    el("button", `align-self: flex-start; padding-top: 15px; padding-bottom: 15px; padding-left: 34px; padding-right: 34px; border-radius: 999px; border-width: 0px; background-color: #0F9300; font-family: ${POP}; font-weight: 400; font-size: 18px; color: #FFFFFF; cursor: pointer;${BTN_HOVER}`, "Request a Personalize Demo", ` type="submit"`)+
     el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${POP}; font-weight: 400; font-size: 14px; color: #464A4B;`, "By submitting, you agree to our privacy policy. No spam, ever.")) +
   el("div", `display: flex; flex-direction: column; gap: 16px; padding: 32px; border-radius: 20px; background-color: #333333;`,
     el("p", `margin-top: 0px; margin-bottom: 8px; font-family: ${POP}; font-weight: 600; font-size: 24px; color: #FFFFFF;`, "What happens next?") +
@@ -40,10 +40,10 @@ const form = el("section", `display: grid; grid-template-columns: repeat(auto-fi
       nextStep("SLA:","30-minute priority response for existing customers"))));
 
 // 3. Contact routes
-const routeCard=(title,body,cta,note)=>el("article",`display: flex; flex-direction: column; gap: 14px; padding: 32px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;`,
+const routeCard=(title,body,cta,note)=>el("article",`display: flex; flex-direction: column; gap: 14px; padding: 32px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;${CARD_HOVER}`,
   el("h3",`margin-top: 0px; margin-bottom: 0px; ${H36}`,esc(title))
   + el("p",`margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; color: #464A4B;`,body)
-  + (cta?el("a",`align-self: flex-start; padding-top: 12px; padding-bottom: 12px; padding-left: 26px; padding-right: 26px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 18px; color: #FFFFFF; text-decoration-line: none;`,esc(cta),` href="#top"`):"")
+  + (cta?el("a",`align-self: flex-start; padding-top: 12px; padding-bottom: 12px; padding-left: 26px; padding-right: 26px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 18px; color: #FFFFFF; text-decoration-line: none;${LINK_HOVER}`,esc(cta),` href="#top"`):"")
   + (note?el("p",`margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 16px; color: #0F9300;`,esc(note)):""));
 
 const inquiryRows = [
@@ -55,11 +55,11 @@ const inquiryBlocks = inquiryRows.map(function (row) {
   const h = row[0], b = row[1], l = row[2], href = row[3];
   const inner = el("p",`margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 18px; color: #333333;`,h)
     + el("p",`margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 16px; line-height: 24px; color: #464A4B;`,esc(b))
-    + el("a",`font-family: ${FIRA}; font-weight: 300; font-size: 18px; color: #224EED; text-decoration-line: none;`,l,` href="${href}"`);
+    + el("a",`font-family: ${FIRA}; font-weight: 300; font-size: 18px; color: #224EED; text-decoration-line: none;${LINK_HOVER}`,l,` href="${href}"`);
   return el("div",`display: flex; flex-direction: column; gap: 4px;`,inner);
 }).join("");
 
-const inquiriesCard = el("article",`display: flex; flex-direction: column; gap: 18px; padding: 32px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;`,
+const inquiriesCard = el("article",`display: flex; flex-direction: column; gap: 18px; padding: 32px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;${CARD_HOVER}`,
   el("h3",`margin-top: 0px; margin-bottom: 0px; ${H36}`,"Other Inquiries") + inquiryBlocks);
 
 const routesGrid = el("div",`display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1300px; margin-left: auto; margin-right: auto;`,
@@ -80,12 +80,12 @@ const why = el("section", `padding-top: clamp(56px, 7vw, 90px); padding-bottom: 
   el("p",`margin-top: 0px; margin-bottom: 40px; max-width: 860px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; color: #464A4B;`,
     "Built for QSR &amp; Retail Operations. Botnizer is purpose built for the unique demands of quick-service restaurants and retail brands in KSA, Bahrain, and Qatar.")+
   el("div",`display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 40px;`,
-    benefits.map(([id,t,b])=>el("article",`display: flex; flex-direction: column; gap: 12px; padding: 28px; border-radius: 20px; background-color: #F9FAFB; border-width: 1px; border-style: solid; border-color: #E6E9EE;`,
+    benefits.map(([id,t,b])=>el("article",`display: flex; flex-direction: column; gap: 12px; padding: 28px; border-radius: 20px; background-color: #F9FAFB; border-width: 1px; border-style: solid; border-color: #E6E9EE;${CARD_HOVER}`,
       img(id,esc(t),`width: 36px; height: 36px;`)+
       el("h3",`margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 20px; color: #333333;`,esc(t))+
       el("p",`margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 16px; line-height: 24px; color: #464A4B;`,esc(b)))).join(""))+
   el("div",`display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;`,
-    stats.map(([n,l])=>el("div",`display: flex; flex-direction: column; gap: 10px; padding: 28px; border-radius: 20px; border-width: 1px; border-style: solid; border-color: #E6E9EE;`,
+    stats.map(([n,l])=>el("div",`display: flex; flex-direction: column; gap: 10px; padding: 28px; border-radius: 20px; border-width: 1px; border-style: solid; border-color: #E6E9EE;${CARD_HOVER}`,
       (n?el("div",`font-family: ${FIRA}; font-weight: 700; font-size: 38px; color: #0F9300;`,n):"")+
       el("div",`font-family: ${FIRA}; font-weight: 400; font-size: 18px; line-height: 26px; color: #606060;`,esc(l)))).join("")), ` id="why"`);
 
@@ -105,7 +105,7 @@ const stories = el("section", `padding-top: clamp(56px, 7vw, 90px); padding-bott
 const partnerCta = el("section", `display: flex; flex-direction: column; align-items: center; padding-top: clamp(56px, 7vw, 90px); padding-bottom: clamp(56px, 7vw, 90px); ${PAD} background-color: #F9FAFB;`,
   el("h2",`margin-top: 0px; margin-bottom: 14px; ${H36} text-align: center;`,"Partner with " + el("span",`color: #0F9300;`,"Botnizer"))+
   el("p",`margin-top: 0px; margin-bottom: 28px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; color: #464A4B; text-align: center;`,"See how Botnizer&#39;s unified platform can transform your operations")+
-  el("a",`display: inline-flex; padding-top: 15px; padding-bottom: 15px; padding-left: 34px; padding-right: 34px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 18px; color: #FFFFFF; text-decoration-line: none;`,"Request a Demo",` href="#top"`), ` id="contact"`);
+  el("a",`display: inline-flex; padding-top: 15px; padding-bottom: 15px; padding-left: 34px; padding-right: 34px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 18px; color: #FFFFFF; text-decoration-line: none;${LINK_HOVER}`,"Request a Demo",` href="#top"`), ` id="contact"`);
 
 const main=`<ws.element ws:label="Main" ws:tag="main" ws:style={css\`display: flex; flex-direction: column;\`}>${
   L(hero, "Hero")}${

@@ -3,7 +3,7 @@
 // the ROI calculator from fig-shared.mjs.
 import fs from "node:fs";
 import { nav, footer, technical, mobileNavBehaviour } from "./fig-gen.mjs";
-import { esc, el, img, FIRA, POP, PAD, H38, H36C, BODY, PILL, roiCalculator, withLabel as L } from "./fig-shared.mjs";
+import { esc, el, img, FIRA, POP, PAD, H38, H36C, BODY, PILL, roiCalculator, withLabel as L , LINK_HOVER, CARD_HOVER, BTN_HOVER} from "./fig-shared.mjs";
 
 const A = {
   hero:        "18FpsDaqSp8wwv25DlufR",  // ds-hero.jpg (slider 4:36466)

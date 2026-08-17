@@ -1,7 +1,7 @@
 // Case Study Detailed page — Figma YcekX1kGhoti7ssk1sOlnr node 4:36956 (Set B, 1440x6320)
 import fs from "node:fs";
 import { nav, footer, caseStudies, mobileNavBehaviour } from "./fig-gen.mjs";
-import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL, withLabel as L } from "./fig-shared.mjs";
+import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL, withLabel as L , LINK_HOVER, CARD_HOVER, BTN_HOVER} from "./fig-shared.mjs";
 
 const A = {
   hero:   "yzW_aV1I038VjPers-XX7",  // fig-case-1 — the design's hero is byte-identical to it
@@ -24,7 +24,7 @@ const hero = el("section",
     el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 14px; color: #FFFFFF;`, "December 26th, 2025") +
     el("h1", `margin-top: 0px; margin-bottom: 0px; max-width: 900px; font-family: ${FIRA}; font-weight: 600; font-size: clamp(20px, 2.2vw, 26px); line-height: 1.35; color: #FFFFFF; text-align: center;`,
       "Botnizer selected as digital drive-thru solutions partner for McDonald&#39;s") +
-    el("a", `display: inline-flex; align-items: center; justify-content: center; padding-top: 6px; padding-bottom: 6px; padding-left: 20px; padding-right: 20px; border-radius: 999px; border-width: 1px; border-style: solid; border-color: #FFFFFF; font-family: ${FIRA}; font-weight: 400; font-size: 13px; color: #FFFFFF; text-decoration-line: none;`,
+    el("a", `display: inline-flex; align-items: center; justify-content: center; padding-top: 6px; padding-bottom: 6px; padding-left: 20px; padding-right: 20px; border-radius: 999px; border-width: 1px; border-style: solid; border-color: #FFFFFF; font-family: ${FIRA}; font-weight: 400; font-size: 13px; color: #FFFFFF; text-decoration-line: none; transition-property: background-color, color; transition-duration: 160ms; transition-timing-function: ease; &:hover { background-color: #FFFFFF; color: #333333; }`,
       "Share", ` href="#top"`)), ` id="top"`);
 
 // ---- 2. Overview / Objectives / Solutions (4:36965) ----

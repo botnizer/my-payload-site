@@ -12,6 +12,13 @@
 // a time in the builder.
 export const withLabel = (jsx, label) => jsx.replace("<ws.element", `<ws.element ws:label="${label}"`);
 
+// Interaction states, re-declared from build-figma-home.mjs rather than
+// imported: fig-gen.mjs (its copy) imports this module, so importing back the
+// other way would be a cycle. Keep the two definitions in step.
+export const LINK_HOVER = ` transition-property: color; transition-duration: 160ms; transition-timing-function: ease; &:hover { color: #0F9300; }`;
+export const CARD_HOVER = ` transition-property: transform, box-shadow, border-color; transition-duration: 200ms; transition-timing-function: ease; &:hover { transform: translateY(-3px); box-shadow: 0px 14px 34px 0px rgba(0,0,0,0.10); border-color: #0F9300; }`;
+export const BTN_HOVER = ` transition-property: transform, box-shadow, filter; transition-duration: 180ms; transition-timing-function: ease; &:hover { transform: translateY(-2px); box-shadow: 0px 10px 24px 0px rgba(15,147,0,0.28); filter: brightness(1.06); }`;
+
 export const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
 export const el = (t,s,c="",a="") => `<ws.element ws:tag="${t}"${a}${s?` ws:style={css\`${s}\`}`:""}>${c}</ws.element>`;
 export const img = (id,alt,s) => `<$.Image src={new AssetValue("${id}")} alt="${alt}" ws:style={css\`${s}\`} />`;
@@ -22,7 +29,7 @@ export const PAD  = `padding-left: clamp(20px, 4.9vw, 70px); padding-right: clam
 export const H38  = `font-family: ${FIRA}; font-weight: 600; font-size: clamp(28px, 3.2vw, 38px); line-height: 1.21; color: #333333;`;
 export const H36C = `font-family: ${FIRA}; font-weight: 600; font-size: clamp(26px, 3vw, 36px); letter-spacing: -1px; color: #333333; text-align: center;`;
 export const BODY = `font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; letter-spacing: 0.36px; color: #464A4B;`;
-export const PILL = `display: inline-flex; align-items: center; justify-content: center; padding-top: 12px; padding-bottom: 12px; padding-left: 28px; padding-right: 28px; border-radius: 999px; background-image: linear-gradient(-11.45deg, #0A6500 0%, #63DE55 100%); font-family: ${POP}; font-weight: 400; font-size: 16px; color: #FFFFFF; text-decoration-line: none; white-space: nowrap;`;
+export const PILL = `display: inline-flex; align-items: center; justify-content: center; padding-top: 12px; padding-bottom: 12px; padding-left: 28px; padding-right: 28px; border-radius: 999px; background-image: linear-gradient(-11.45deg, #0A6500 0%, #63DE55 100%); font-family: ${POP}; font-weight: 400; font-size: 16px; color: #FFFFFF; text-decoration-line: none; white-space: nowrap;${BTN_HOVER}`;
 
 // 40px gradient chip with a 21.333px leaf — 4:28119 / 4:27627
 export const chip = (assetId, label) =>
@@ -30,7 +37,7 @@ export const chip = (assetId, label) =>
     img(assetId, label, `width: 21.333px; height: 21.333px;`));
 
 export const iconCard = (assetId, title, body) =>
-  el("article", `display: flex; flex-direction: column; gap: 24px; padding-top: 30px; padding-bottom: 30px; padding-left: 20px; padding-right: 20px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;`,
+  el("article", `display: flex; flex-direction: column; gap: 24px; padding-top: 30px; padding-bottom: 30px; padding-left: 20px; padding-right: 20px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;${CARD_HOVER}`,
     el("div", `display: flex; align-items: center; gap: 18px;`,
       chip(assetId, esc(title)) +
       el("h3", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 600; font-size: 20px; line-height: 26px; color: #262626;`, esc(title))) +
@@ -62,11 +69,11 @@ const ctaFormRaw = el("section",
       el("input", fieldStyle + ` color: #464A4B;`, "",
         ` type="text" name="challenge" placeholder="What’s your biggest operational challenge?" aria-label="What’s your biggest operational challenge?"`) +
       field("Tell us more","textarea",` name="message" rows="6"`) +
-      el("button", `align-self: flex-start; padding-top: 12px; padding-bottom: 12px; padding-left: 34px; padding-right: 34px; border-radius: 999px; border-width: 0px; background-image: linear-gradient(-11.45deg, #0A6500 0%, #63DE55 100%); font-family: ${POP}; font-weight: 400; font-size: 16px; color: #FFFFFF; cursor: pointer;`,
+      el("button", `align-self: flex-start; padding-top: 12px; padding-bottom: 12px; padding-left: 34px; padding-right: 34px; border-radius: 999px; border-width: 0px; background-image: linear-gradient(-11.45deg, #0A6500 0%, #63DE55 100%); font-family: ${POP}; font-weight: 400; font-size: 16px; color: #FFFFFF; cursor: pointer;${BTN_HOVER}`,
         "Request a Personalize Demo", ` type="submit"`) +
       el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${POP}; font-weight: 400; font-size: 13px; color: #464A4B;`,
         "By submitting, you agree to our " +
-        el("a", `color: #224EED; text-decoration-line: underline;`, "Privacy Policy", ` href="#privacy"`) +
+        el("a", `color: #224EED; text-decoration-line: underline;${LINK_HOVER}`, "Privacy Policy", ` href="#privacy"`) +
         ". No spam, ever.")), ` id="get-in-touch"`));
 
 // ---- ROI calculator (4:36698 on Drive-Thru, 4:36479 + 4:36555 on Digital Signage) ----

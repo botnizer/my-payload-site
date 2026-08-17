@@ -2,7 +2,7 @@
 // Reuses nav / offering / caseStudies / footer from fig-gen.mjs so shared chrome stays in one place.
 import fs from "node:fs";
 import { nav, footer, offering, caseStudies, mobileNavBehaviour } from "./fig-gen.mjs";
-import { ctaForm, withLabel as L } from "./fig-shared.mjs";
+import { ctaForm, withLabel as L , LINK_HOVER, CARD_HOVER, BTN_HOVER} from "./fig-shared.mjs";
 
 const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
 const el = (t,s,c="",a="") => `<ws.element ws:tag="${t}"${a}${s?` ws:style={css\`${s}\`}`:""}>${c}</ws.element>`;
@@ -15,7 +15,7 @@ const PAD  = `padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px,
 const H36  = `font-family: ${FIRA}; font-weight: 600; font-size: clamp(26px, 3vw, 36px); line-height: 1.2; letter-spacing: -1px; color: #333333;`;
 const SUB  = `font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; color: #464A4B;`;
 // Green CTA pill (4:27515) — linear-gradient(-11.45deg, #0A6500, #63DE55)
-const PILL = `display: inline-flex; align-items: center; justify-content: center; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 20px; border-radius: 999px; border-width: 1px; border-style: solid; border-color: #333333; background-image: linear-gradient(-11.45deg, #0A6500 0%, #63DE55 100%); font-family: ${POP}; font-weight: 400; font-size: 18px; letter-spacing: -1px; color: #FFFFFF; text-decoration-line: none; white-space: nowrap;`;
+const PILL = `display: inline-flex; align-items: center; justify-content: center; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 20px; border-radius: 999px; border-width: 1px; border-style: solid; border-color: #333333; background-image: linear-gradient(-11.45deg, #0A6500 0%, #63DE55 100%); font-family: ${POP}; font-weight: 400; font-size: 18px; letter-spacing: -1px; color: #FFFFFF; text-decoration-line: none; white-space: nowrap;${BTN_HOVER}`;
 
 const A = {
   hero:  "KR-MIvkP0zOhnJut-HrfW",  // sol-hero.jpg   (slider frame 4:36104, transcoded 1440->1600w jpg)
@@ -42,7 +42,7 @@ const resultCards = [
   ["Drive-Thru Leader","120+ locations | Drive-thru focus",[["31%","↑ Drive-thru speed"],["4.8★","Customer rating"]],
    "“Botnizer’s drive-thru timer and audio system reduced our average service time from 3:45 to 2:35 minutes.”"],
 ];
-const viewCase = el("a", `display: inline-flex; align-items: center; gap: 10px; font-family: ${FIRA}; font-weight: 500; font-size: 16px; color: #2859EC; text-decoration-line: none;`,
+const viewCase = el("a", `display: inline-flex; align-items: center; gap: 10px; font-family: ${FIRA}; font-weight: 500; font-size: 16px; color: #2859EC; text-decoration-line: none;${LINK_HOVER}`,
   "View Case Study" + img(A.arrow, "", `width: 14px; height: 10.857px; flex-shrink: 0;`), ` href="/case-studies/detail"`);
 
 const results = el("section",
@@ -53,7 +53,7 @@ const results = el("section",
     "Trade Foresight’s powerful dataset is constantly growing and expanding making it preferred platform for all Trading needs.") +
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 100%; max-width: 1300px; margin-bottom: 44px;`,
     resultCards.map(([name, meta, stats, quote]) =>
-      el("article", `display: flex; flex-direction: column; justify-content: space-between; gap: 28px; padding-top: 40px; padding-bottom: 40px; padding-left: 30px; padding-right: 30px; border-radius: 10px; background-color: #F9F9F9; border-width: 1px; border-style: solid; border-color: #E6E9EE;`,
+      el("article", `display: flex; flex-direction: column; justify-content: space-between; gap: 28px; padding-top: 40px; padding-bottom: 40px; padding-left: 30px; padding-right: 30px; border-radius: 10px; background-color: #F9F9F9; border-width: 1px; border-style: solid; border-color: #E6E9EE;${CARD_HOVER}`,
         el("div", `display: flex; flex-direction: column;`,
           el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 600; font-size: clamp(28px, 2.6vw, 36px); letter-spacing: -1px; color: #333333;`, esc(name)) +
           el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; color: #333333;`, esc(meta))) +
@@ -106,7 +106,7 @@ const advantage = el("section",
   el("p", `margin-top: 0px; margin-bottom: 40px; max-width: 722px; ${SUB} text-align: center;`, "Why choose integrated solutions over point systems") +
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; width: 100%; max-width: 1300px;`,
     advantages.map(([title, body], i) =>
-      el("article", `display: flex; flex-direction: column; gap: 24px; padding-top: 30px; padding-bottom: 30px; padding-left: 20px; padding-right: 20px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;`,
+      el("article", `display: flex; flex-direction: column; gap: 24px; padding-top: 30px; padding-bottom: 30px; padding-left: 20px; padding-right: 20px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;${CARD_HOVER}`,
         el("div", `display: flex; align-items: center; gap: 18px;`,
           el("div", `display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 7.217px; background-image: linear-gradient(-45deg, #0A6500 0%, #63DE55 100%);`,
             img(A.adv[i], esc(title), `width: 21.333px; height: 21.333px;`)) +

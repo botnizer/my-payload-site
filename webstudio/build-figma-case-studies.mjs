@@ -1,7 +1,7 @@
 // Case Study page — Figma YcekX1kGhoti7ssk1sOlnr node 4:37161 (Set B, 1440x5178)
 import fs from "node:fs";
 import { nav, footer, trust, mobileNavBehaviour } from "./fig-gen.mjs";
-import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL, withLabel as L } from "./fig-shared.mjs";
+import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL, withLabel as L , LINK_HOVER, CARD_HOVER, BTN_HOVER} from "./fig-shared.mjs";
 
 const A = {
   billboard: "RLqkppj9c3Y5NRUhvg63O",  // cs-billboard.jpg (4:37162 hero)
@@ -62,7 +62,7 @@ const card = ([title, solution, results], [asset, alt]) =>
       el("p", `margin-top: 0px; margin-bottom: 0px; ${BODY} font-size: 16px; line-height: 24px;`,
         el("span", `font-weight: 500;`, "Solution:") + " " + solution + `<ws.element ws:tag="br"></ws.element>` +
         el("span", `font-weight: 500;`, "Results:") + " " + esc(results)) +
-      el("a", `display: inline-flex; align-items: center; gap: 8px; font-family: ${FIRA}; font-weight: 400; font-size: 14px; color: #0033C3; text-decoration-line: none;`,
+      el("a", `display: inline-flex; align-items: center; gap: 8px; font-family: ${FIRA}; font-weight: 400; font-size: 14px; color: #0033C3; text-decoration-line: none;${LINK_HOVER}`,
         "Read More →", ` href="/case-studies/detail"`)));
 
 const talks = el("section",
@@ -70,7 +70,7 @@ const talks = el("section",
   el("h2", `margin-top: 0px; margin-bottom: 28px; align-self: flex-start; ${H38}`, "Botnizer Talks") +
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; width: 100%; max-width: 1300px; margin-bottom: 40px;`,
     cardImages.map((imgSpec, i) => card(cases[i % 3], imgSpec)).join("")) +
-  el("a", `display: inline-flex; align-items: center; justify-content: center; padding-top: 10px; padding-bottom: 10px; padding-left: 34px; padding-right: 34px; border-radius: 999px; border-width: 1px; border-style: solid; border-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #0F9300; text-decoration-line: none;`,
+  el("a", `display: inline-flex; align-items: center; justify-content: center; padding-top: 10px; padding-bottom: 10px; padding-left: 34px; padding-right: 34px; border-radius: 999px; border-width: 1px; border-style: solid; border-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #0F9300; text-decoration-line: none;${LINK_HOVER}`,
     "See More", ` href="/case-studies/detail"`), ` id="cases"`);
 
 // ---- 6. Gallery (4:37342) ----

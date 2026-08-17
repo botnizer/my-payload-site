@@ -2,7 +2,7 @@
 // Reuses nav / trust / footer from fig-gen.mjs and helpers from fig-shared.mjs.
 import fs from "node:fs";
 import { nav, footer, trust, mobileNavBehaviour } from "./fig-gen.mjs";
-import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL, withLabel as L } from "./fig-shared.mjs";
+import { esc, el, img, FIRA, POP, PAD, H38, BODY, PILL, withLabel as L , LINK_HOVER, CARD_HOVER, BTN_HOVER} from "./fig-shared.mjs";
 
 const A = {
   hero:     "T-M5YIBuHiHxq5RocTERN",  // ab-hero.jpg    (4:36359 restaurant interior + kiosk)
@@ -83,7 +83,7 @@ const impactSection = el("section",
     "The numbers tell our story helping restaurants achieve measurable results.") +
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1300px;`,
     impact.map(([n,l]) =>
-      el("div", `display: flex; flex-direction: column; gap: 10px; padding-top: 30px; padding-bottom: 30px; padding-left: 24px; padding-right: 24px; border-radius: 10px; border-width: 1px; border-style: solid; border-color: #E6E9EE;`,
+      el("div", `display: flex; flex-direction: column; gap: 10px; padding-top: 30px; padding-bottom: 30px; padding-left: 24px; padding-right: 24px; border-radius: 10px; border-width: 1px; border-style: solid; border-color: #E6E9EE;${CARD_HOVER}`,
         el("span", `font-family: ${FIRA}; font-weight: 600; font-size: clamp(28px, 3vw, 38px); color: #333333;`, esc(n)) +
         el("span", `font-family: ${FIRA}; font-weight: 300; font-size: 18px; color: #464A4B;`, esc(l)))).join("")));
 

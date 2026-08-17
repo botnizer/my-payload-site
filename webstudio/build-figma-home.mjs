@@ -44,6 +44,21 @@ export const COMPANY_LINKS = [
 ];
 
 const navLinks = [[ROUTES.solutions,"Solutions"],[ROUTES.about,"About"],[ROUTES.cases,"Case Study"],[ROUTES.contact,"Contact"]];
+// ---- Interaction states ----
+//
+// The design marks every link as interactive (the Figma "Hover" component is a
+// link with cursor:pointer) but does not pin down the hovered appearance, so
+// these follow the brand's existing action colour rather than inventing a new
+// one: green on light backgrounds, the brighter green on dark. Cards lift, and
+// buttons lift and brighten.
+//
+// Kept as constants so a hover reads the same everywhere instead of drifting
+// per page, and exported so the page generators use the same three.
+export const LINK_HOVER = ` transition-property: color; transition-duration: 160ms; transition-timing-function: ease; &:hover { color: #0F9300; }`;
+export const LINK_HOVER_DARK = ` transition-property: color; transition-duration: 160ms; transition-timing-function: ease; &:hover { color: #FFFFFF; }`;
+export const CARD_HOVER = ` transition-property: transform, box-shadow, border-color; transition-duration: 200ms; transition-timing-function: ease; &:hover { transform: translateY(-3px); box-shadow: 0px 14px 34px 0px rgba(0,0,0,0.10); border-color: #0F9300; }`;
+export const BTN_HOVER = ` transition-property: transform, box-shadow, filter; transition-duration: 180ms; transition-timing-function: ease; &:hover { transform: translateY(-2px); box-shadow: 0px 10px 24px 0px rgba(15,147,0,0.28); filter: brightness(1.06); }`;
+
 const navLinkStyle = `font-family: ${FIRA}; font-weight: 300; font-size: clamp(15px, 1.4vw, 20px); color: #FFFFFF; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px; white-space: nowrap; transition-property: color; transition-duration: 160ms; transition-timing-function: ease; &:hover { color: #13C000; }`;
 
 // Panel column. Mirrors the footer's fcol so the two stay visually consistent.
@@ -52,7 +67,7 @@ const panelCol = (heading, links) =>
     el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 15px; letter-spacing: 0.5px; text-transform: uppercase; color: #9C9C9C;`, esc(heading)) +
     el("div", `display: flex; flex-direction: column; gap: 4px;`,
       links.map(([label, href]) => el("a",
-        `font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 26px; color: #333333; text-decoration-line: none; padding-top: 4px; padding-bottom: 4px;`,
+        `font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 26px; color: #333333; text-decoration-line: none; padding-top: 4px; padding-bottom: 4px;${LINK_HOVER}`,
         esc(label), ` href="${href}"`)).join("")));
 
 // Webstudio's css template supports self-states (:hover / :focus-within) but not
@@ -80,7 +95,7 @@ const megaPanel = el("div",
     el("div", `display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 10px; background-color: #F3F3F3;`,
       el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 20px; color: #333333;`, "Let&#39;s Get Started!") +
       el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 17px; line-height: 25px; color: #333333;`, "We&#39;re here to listen and assist.") +
-      el("a", `align-self: flex-start; display: inline-flex; padding-top: 10px; padding-bottom: 10px; padding-left: 22px; padding-right: 22px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #FFFFFF; text-decoration-line: none;`,
+      el("a", `align-self: flex-start; display: inline-flex; padding-top: 10px; padding-bottom: 10px; padding-left: 22px; padding-right: 22px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #FFFFFF; text-decoration-line: none;${BTN_HOVER}`,
         "Contact us today", ` href="${ROUTES.contact}"`))));
 
 const whatWeDo = el("div",
@@ -119,11 +134,11 @@ const MOBILE_LINKS = [
 // nav (white over the hero video, and still white over the black glass).
 const bar = `display: block; width: 24px; height: 0px; border-top-width: 2px; border-top-style: solid; border-top-color: currentcolor; border-radius: 2px;`;
 const hamburger = el("button",
-  `display: none; flex-direction: column; justify-content: center; gap: 5px; align-items: flex-end; margin-left: auto; width: 44px; height: 44px; padding: 10px; border-width: 0px; background-color: transparent; color: #FFFFFF; cursor: pointer;`,
+  `display: none; flex-direction: column; justify-content: center; gap: 5px; align-items: flex-end; margin-left: auto; width: 44px; height: 44px; padding: 10px; border-width: 0px; background-color: transparent; color: #FFFFFF; cursor: pointer; transition-property: opacity; transition-duration: 160ms; transition-timing-function: ease; &:hover { opacity: 0.72; }`,
   el("span", bar) + el("span", bar) + el("span", bar),
   ` type="button" data-menu="toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"`);
 
-const mobileLinkStyle = `font-family: ${FIRA}; font-weight: 400; font-size: clamp(28px, 9vw, 40px); line-height: 1.35; color: #333333; text-decoration-line: none;`;
+const mobileLinkStyle = `font-family: ${FIRA}; font-weight: 400; font-size: clamp(28px, 9vw, 40px); line-height: 1.35; color: #333333; text-decoration-line: none;${LINK_HOVER}`;
 
 // The slide lives on this inner wrapper, never on the panel itself.
 //
@@ -137,7 +152,7 @@ const mobilePanelInner = el("div",
   el("div", `display: flex; flex-direction: column; gap: 10px;`,
     MOBILE_LINKS.map(([label, href]) => el("a", mobileLinkStyle, esc(label), ` href="${href}"`)).join("")) +
   el("div", `margin-top: 32px; margin-bottom: 32px; border-top-width: 1px; border-top-style: solid; border-top-color: #E6E9EE;`) +
-  el("a", `align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; padding-top: 12px; padding-bottom: 12px; padding-left: 28px; padding-right: 28px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 17px; color: #FFFFFF; text-decoration-line: none;`,
+  el("a", `align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; padding-top: 12px; padding-bottom: 12px; padding-left: 28px; padding-right: 28px; border-radius: 999px; background-color: #0F9300; font-family: ${FIRA}; font-weight: 400; font-size: 17px; color: #FFFFFF; text-decoration-line: none;${BTN_HOVER}`,
     "Request a Demo", ` href="${ROUTES.contact}"`),
   ` data-menu="inner"`);
 
@@ -146,7 +161,7 @@ const mobilePanel = el("div",
   // of snapping — the same technique the desktop mega panel uses.
   `position: fixed; top: 0px; left: 0px; right: 0px; bottom: 0px; z-index: 90; display: flex; flex-direction: column; padding-top: 96px; padding-bottom: 40px; padding-left: clamp(28px, 20vw, 80px); padding-right: 28px; background-color: #FFFFFF; overflow-y: auto; overflow-x: hidden; visibility: hidden; opacity: 0; transition-property: opacity, visibility; transition-duration: 260ms, 0ms; transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: 0ms, 260ms;`,
   el("button",
-    `position: absolute; top: 16px; right: 24px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0px; border-width: 0px; background-color: transparent; font-family: ${FIRA}; font-weight: 300; font-size: 34px; line-height: 1; color: #333333; cursor: pointer;`,
+    `position: absolute; top: 16px; right: 24px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0px; border-width: 0px; background-color: transparent; font-family: ${FIRA}; font-weight: 300; font-size: 34px; line-height: 1; color: #333333; cursor: pointer;${LINK_HOVER}`,
     "&#215;", ` type="button" data-menu="close" aria-label="Close menu"`) +
   mobilePanelInner,
   ` id="mobile-menu" data-menu="panel"`);
@@ -166,7 +181,7 @@ const navRaw = el("header",
   // contrast for the white links over the white sections on the other pages —
   // this header is shared, so it has to hold up on both.
   `position: sticky; top: 0px; z-index: 50; display: flex; align-items: center; justify-content: flex-start; gap: clamp(20px, 4vw, 56px); padding-top: 25px; padding-bottom: 25px; padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px, 4.9vw, 70px); background-color: rgba(0,0,0,0.58); background-image: linear-gradient(180deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.66) 55%, rgba(0,0,0,0.54) 100%); backdrop-filter: blur(20px) saturate(170%); box-shadow: inset 0px 1px 0px 0px rgba(255,255,255,0.12), 0px 10px 30px 0px rgba(0,0,0,0.28); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #13C000;`,
-  el("a", `display: flex; align-items: center; gap: 5px; text-decoration-line: none; flex-shrink: 0;`,
+  el("a", `display: flex; align-items: center; gap: 5px; text-decoration-line: none; flex-shrink: 0; transition-property: opacity; transition-duration: 160ms; transition-timing-function: ease; &:hover { opacity: 0.72; }`,
      img(A.logo, "Botnizer", `height: 34px; width: auto;`), ` href="${ROUTES.home}"`) +
   withLabel(el("nav", `display: flex; flex-wrap: wrap; align-items: center; gap: 30px;`,
      withLabel(whatWeDo, "What We Do (dropdown)") +
@@ -406,7 +421,7 @@ const caseStudiesRaw = el("section",
           el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; letter-spacing: 0.36px; color: #464A4B;`,
             el("span", `font-weight: 500;`, "Solution:") + " " + solution + "<ws.element ws:tag=\"br\"></ws.element>" +
             el("span", `font-weight: 500;`, "Results:") + " " + esc(res)) +
-          el("a", `display: inline-flex; align-items: center; gap: 10px; font-family: ${FIRA}; font-weight: 400; font-size: 14px; line-height: 1.4; color: #0033C3; text-decoration-line: none;`, "Read More →", ` href="${ROUTES.caseDetail}"`)))).join("")), ` id="cases"`);
+          el("a", `display: inline-flex; align-items: center; gap: 10px; font-family: ${FIRA}; font-weight: 400; font-size: 14px; line-height: 1.4; color: #0033C3; text-decoration-line: none;${LINK_HOVER}`, "Read More →", ` href="${ROUTES.caseDetail}"`)))).join("")), ` id="cases"`);
 
 // ---- Technical (65:49360) ----
 const integrations = [["cdkhmIrpwW3T6HQnyNCNF","Toast POS"],["SCeTgxgnQMJ6uY7-5Lm5Z","NCR Aloha"],["tu_tMDg9xB6i7p4heNTve","Kitchen Display"],["sH5ZMAYft7s2bSKXf19DY","Micros"],["sDBLLj0UbzXNKsh6PODJS","CRM"]];
@@ -426,7 +441,7 @@ const technicalRaw = el("section",
         el("div", `display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 9px; background-color: #FFFFFF;`,
           img(id, esc(label), `width: 32px; height: auto;`)) +
         el("span", `font-family: ${FIRA}; font-weight: 400; font-size: 15.6px; line-height: 21px; color: #FFFFFF; text-align: center;`, esc(label)))).join("")) +
-  el("a", `display: inline-flex; align-items: center; justify-content: center; margin-bottom: 34px; padding-top: 9px; padding-bottom: 9px; padding-left: 37px; padding-right: 37px; border-radius: 914px; border-width: 1px; border-style: solid; border-color: #0F9300; background-image: linear-gradient(-11deg, #0A6500 0%, #63DE55 100%); box-shadow: 0px 4px 22px 0px rgba(15,147,0,0.55); font-family: ${FIRA}; font-weight: 400; font-size: 16.5px; letter-spacing: -0.9px; color: #FFFFFF; text-decoration-line: none;`, "Request a Demo", ` href="${ROUTES.contact}"`) +
+  el("a", `display: inline-flex; align-items: center; justify-content: center; margin-bottom: 34px; padding-top: 9px; padding-bottom: 9px; padding-left: 37px; padding-right: 37px; border-radius: 914px; border-width: 1px; border-style: solid; border-color: #0F9300; background-image: linear-gradient(-11deg, #0A6500 0%, #63DE55 100%); box-shadow: 0px 4px 22px 0px rgba(15,147,0,0.55); font-family: ${FIRA}; font-weight: 400; font-size: 16.5px; letter-spacing: -0.9px; color: #FFFFFF; text-decoration-line: none;${BTN_HOVER}`, "Request a Demo", ` href="${ROUTES.contact}"`) +
   el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 34px; color: #FFFFFF; text-align: center;`,
     "Trusted by CTOs for secure, scalable, and fully integrated operational solutions."), ` id="what-we-do"`);
 
@@ -445,7 +460,7 @@ const footerRaw = el("footer",
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text ever since the 1500s.")) +
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; align-items: start;`,
     el("div", `display: flex; flex-direction: column; gap: 24px;`,
-      el("a", `align-self: flex-start; text-decoration-line: none;`,
+      el("a", `align-self: flex-start; text-decoration-line: none; transition-property: opacity; transition-duration: 160ms; transition-timing-function: ease; &:hover { opacity: 0.72; }`,
         img(A.logo, "Botnizer", `height: 57px; width: auto;`), ` href="${ROUTES.home}"`)) +
     fcol("Experience", EXPERIENCE_LINKS) +
     fcol("Products", PRODUCT_LINKS) +
@@ -454,10 +469,10 @@ const footerRaw = el("footer",
       el("p", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 500; font-size: 24px; color: #FFFFFF;`, "Let&#39;s Get Started!") +
       el("div", `display: flex; flex-direction: column; gap: 10px;`,
         el("p", `margin-top: 0px; margin-bottom: 0px; max-width: 260px; font-family: ${FIRA}; font-weight: 300; font-size: 22px; color: rgba(255,255,255,0.78);`, "We&#39;re here to listen and assist.") +
-        el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: #13C000; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px;`, "Contact us today", ` href="${ROUTES.contact}"`)))) +
+        el("a", `font-family: ${FIRA}; font-weight: 300; font-size: 20px; color: #13C000; text-decoration-line: none; padding-top: 10px; padding-bottom: 10px;${LINK_HOVER_DARK}`, "Contact us today", ` href="${ROUTES.contact}"`)))) +
   el("div", `display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding-top: 24px; border-top-width: 1px; border-top-style: solid; border-top-color: rgba(255,255,255,0.12);`,
     el("span", `font-family: ${FIRA}; font-weight: 300; font-size: 16px; color: rgba(255,255,255,0.6);`, "©2025 Botnizer, All rights reserved") +
-    el("a", `margin-left: auto; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #13C000; text-decoration-line: none;`, "Back to top ↑", ` href="#top"`)), ` id="contact"`);
+    el("a", `margin-left: auto; font-family: ${FIRA}; font-weight: 400; font-size: 16px; color: #13C000; text-decoration-line: none;${LINK_HOVER_DARK}`, "Back to top ↑", ` href="#top"`)), ` id="contact"`);
 
 // ---- Navigator labels for the shared fragments ----
 export const nav = withLabel(navRaw, "Nav Bar");

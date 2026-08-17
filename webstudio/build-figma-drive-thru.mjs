@@ -2,7 +2,7 @@
 // Reuses nav / footer from fig-gen.mjs and the CTA form pattern from the Solutions build.
 import fs from "node:fs";
 import { nav, footer, mobileNavBehaviour } from "./fig-gen.mjs";
-import { ctaForm, roiCalculator, withLabel as L } from "./fig-shared.mjs";
+import { ctaForm, roiCalculator, withLabel as L , LINK_HOVER, CARD_HOVER, BTN_HOVER} from "./fig-shared.mjs";
 
 const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\{/g,"&#123;").replace(/\}/g,"&#125;");
 const el = (t,s,c="",a="") => `<ws.element ws:tag="${t}"${a}${s?` ws:style={css\`${s}\`}`:""}>${c}</ws.element>`;
@@ -14,7 +14,7 @@ const PAD  = `padding-left: clamp(20px, 4.9vw, 70px); padding-right: clamp(20px,
 const H38  = `font-family: ${FIRA}; font-weight: 600; font-size: clamp(28px, 3.2vw, 38px); line-height: 1.21; color: #333333;`;
 const H36C = `font-family: ${FIRA}; font-weight: 600; font-size: clamp(26px, 3vw, 36px); letter-spacing: -1px; color: #333333; text-align: center;`;
 const BODY = `font-family: ${FIRA}; font-weight: 300; font-size: 18px; line-height: 28px; letter-spacing: 0.36px; color: #464A4B;`;
-const PILL = `display: inline-flex; align-items: center; justify-content: center; padding-top: 12px; padding-bottom: 12px; padding-left: 28px; padding-right: 28px; border-radius: 999px; background-image: linear-gradient(-11.45deg, #0A6500 0%, #63DE55 100%); font-family: ${POP}; font-weight: 400; font-size: 16px; color: #FFFFFF; text-decoration-line: none; white-space: nowrap;`;
+const PILL = `display: inline-flex; align-items: center; justify-content: center; padding-top: 12px; padding-bottom: 12px; padding-left: 28px; padding-right: 28px; border-radius: 999px; background-image: linear-gradient(-11.45deg, #0A6500 0%, #63DE55 100%); font-family: ${POP}; font-weight: 400; font-size: 16px; color: #FFFFFF; text-decoration-line: none; white-space: nowrap;${BTN_HOVER}`;
 
 const A = {
   hero:    "wEirIX5fm0ZgDHFfka2MB",  // dt-hero.jpg     (slider 4:36687)
@@ -39,7 +39,7 @@ const chip = (assetId, label) =>
 
 // Icon card used by both AI Optimization (4:28116) and Integration (4:36776)
 const iconCard = (assetId, title, body) =>
-  el("article", `display: flex; flex-direction: column; gap: 24px; padding-top: 30px; padding-bottom: 30px; padding-left: 20px; padding-right: 20px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;`,
+  el("article", `display: flex; flex-direction: column; gap: 24px; padding-top: 30px; padding-bottom: 30px; padding-left: 20px; padding-right: 20px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;${CARD_HOVER}`,
     el("div", `display: flex; align-items: center; gap: 18px;`,
       chip(assetId, esc(title)) +
       el("h3", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 600; font-size: 20px; line-height: 26px; color: #262626;`, esc(title))) +
@@ -137,7 +137,7 @@ const integration = el("section",
     "Botnizer drive-thru solutions connect directly to your existing technology stack") +
   el("div", `display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; width: 100%; max-width: 1298px; margin-bottom: 40px;`,
     integrations.map(([t,b]) =>
-      el("article", `display: flex; flex-direction: column; gap: 24px; padding: 30px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;`,
+      el("article", `display: flex; flex-direction: column; gap: 24px; padding: 30px; border-radius: 20px; background-color: #FFFFFF; border-width: 1px; border-style: solid; border-color: #E6E9EE;${CARD_HOVER}`,
         el("div", `display: flex; align-items: center; gap: 18px;`,
           chip(A.optMenu, esc(t)) +
           el("h3", `margin-top: 0px; margin-bottom: 0px; font-family: ${FIRA}; font-weight: 600; font-size: 20px; line-height: 26px; color: #262626;`, t)) +
